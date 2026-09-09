@@ -1,0 +1,77 @@
+services:
+  mariadb:
+    image: mariadb:11
+    container_name: flarum-mariadb-dlivr-it
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - MARIADB_DATABASE=flarum
+      - MARIADB_USER=flarum
+      - MARIADB_AUTO_UPGRADE=1
+    volumes:
+      - ./data/db:/var/lib/mysql
+    networks:
+      - default
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 5 bash -c '</dev/tcp/127.0.0.1/3306'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  flarum:
+    image: ghcr.io/kernicde/dlivr-it-flarum:latest
+    container_name: flarum-app-dlivr-it
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./data/flarum:/var/www/html
+    networks:
+      - default
+      - dlivr-net
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:alpine
+    container_name: flarum-nginx-dlivr-it
+    restart: unless-stopped
+    volumes:
+      - ./data/flarum:/var/www/html:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - default
+      - proxy
+      - dlivr-net
+    depends_on:
+      - flarum
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.dlivr-it.rule=Host(`dlivr.it`) || Host(`www.dlivr.it`)"
+      - "traefik.http.routers.dlivr-it.entrypoints=websecure"
+      - "traefik.http.routers.dlivr-it.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.dlivr-it.service=dlivr-it-flarum"
+      - "traefik.http.services.dlivr-it-flarum.loadbalancer.server.port=80"
+      - "traefik.http.services.dlivr-it-flarum.loadbalancer.server.scheme=http"
+      - "traefik.http.routers.dlivr-it-www-redirect.rule=Host(`www.dlivr.it`)"
+      - "traefik.http.routers.dlivr-it-www-redirect.entrypoints=web"
+      - "traefik.http.routers.dlivr-it-www-redirect.middlewares=dlivr-it-redirect"
+      - "traefik.http.middlewares.dlivr-it-redirect.redirectregex.regex=^https?://www\\.(.*)"
+      - "traefik.http.middlewares.dlivr-it-redirect.redirectregex.replacement=https://$${1}"
+      - "traefik.http.middlewares.dlivr-it-redirect.redirectregex.permanent=true"
+      - "traefik.http.routers.dlivr-it-http.rule=Host(`dlivr.it`) || Host(`www.dlivr.it`)"
+      - "traefik.http.routers.dlivr-it-http.entrypoints=web"
+      - "traefik.http.routers.dlivr-it-http.middlewares=dlivr-it-https"
+      - "traefik.http.middlewares.dlivr-it-https.redirectscheme.scheme=https"
+
+networks:
+  default:
+    name: flarum-dlivr-it-net
+  proxy:
+    external: true
+  dlivr-net:
+    external: true
