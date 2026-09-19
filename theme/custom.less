@@ -219,15 +219,15 @@ input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
     transform: translateY(1px);   // Mitte der Leiste (60px - 2px Rand) statt der Controls-Zeile
   }
 }
-// kleines Markenzeichen vor dem Titel
+// Markenzeichen (Ring, Punkt, Dreieck) vor dem Titel; Datei aus brand/ (scripts/deploy-brand.sh),
+// weisser Ring und helle Akzente, damit es auf dem orangefarbenen Verlauf steht.
 #home-link::before {
   content: '';
-  width: 6px;
-  height: 20px;
-  margin-right: 18px;
-  background: #ffffff;
-  transform: skewX(-18deg);
-  box-shadow: 9px 0 0 rgba(255, 255, 255, 0.45);
+  flex: none;
+  width: 34px;
+  height: 34px;
+  margin-right: 12px;
+  background: url(/brand/mark-header.svg?v=1) center / contain no-repeat;
 }
 
 // Links zu IRC, Mumble und Mastodon links in der Kopfleiste (per local/freespawn-links eingehängt).
