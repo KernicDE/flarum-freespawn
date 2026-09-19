@@ -1,0 +1,62 @@
+-- Zugriff: Gast/Nutzer sehen alles ausser Interner Bereich, Intern, Moderation. Mitglied+Moderator: Intern. Moderator: Moderation.
+-- Flarum: is_restricted=1 verlangt pro Tag explizite Rechte tagN.<recht>; Kind-Tags erben zusaetzlich die Rechte des Eltern-Tags.
+START TRANSACTION;
+UPDATE tags SET is_restricted=1 WHERE id IN (15,7,2);
+-- Technik (3) und Bewerbungen (4) sind oeffentlich: die alten, wirkungslosen viewForum-Zeilen entfernen
+DELETE FROM group_permission WHERE permission LIKE 'tag3.%' OR permission LIKE 'tag4.%';
+INSERT IGNORE INTO group_permission (group_id, permission) VALUES
+  (14, 'tag15.viewForum'),
+  (14, 'tag15.startDiscussion'),
+  (14, 'tag15.discussion.reply'),
+  (14, 'tag15.discussion.likePosts'),
+  (14, 'tag15.discussion.flagPosts'),
+  (4, 'tag15.viewForum'),
+  (4, 'tag15.startDiscussion'),
+  (4, 'tag15.discussion.reply'),
+  (4, 'tag15.discussion.likePosts'),
+  (4, 'tag15.discussion.flagPosts'),
+  (4, 'tag15.discussion.editPosts'),
+  (4, 'tag15.discussion.hide'),
+  (4, 'tag15.discussion.hidePosts'),
+  (4, 'tag15.discussion.lock'),
+  (4, 'tag15.discussion.rename'),
+  (4, 'tag15.discussion.sticky'),
+  (4, 'tag15.discussion.tag'),
+  (4, 'tag15.discussion.viewFlags'),
+  (4, 'tag15.discussion.viewIpsPosts'),
+  (14, 'tag7.viewForum'),
+  (14, 'tag7.startDiscussion'),
+  (14, 'tag7.discussion.reply'),
+  (14, 'tag7.discussion.likePosts'),
+  (14, 'tag7.discussion.flagPosts'),
+  (4, 'tag7.viewForum'),
+  (4, 'tag7.startDiscussion'),
+  (4, 'tag7.discussion.reply'),
+  (4, 'tag7.discussion.likePosts'),
+  (4, 'tag7.discussion.flagPosts'),
+  (4, 'tag7.discussion.editPosts'),
+  (4, 'tag7.discussion.hide'),
+  (4, 'tag7.discussion.hidePosts'),
+  (4, 'tag7.discussion.lock'),
+  (4, 'tag7.discussion.rename'),
+  (4, 'tag7.discussion.sticky'),
+  (4, 'tag7.discussion.tag'),
+  (4, 'tag7.discussion.viewFlags'),
+  (4, 'tag7.discussion.viewIpsPosts'),
+  (4, 'tag2.viewForum'),
+  (4, 'tag2.startDiscussion'),
+  (4, 'tag2.discussion.reply'),
+  (4, 'tag2.discussion.likePosts'),
+  (4, 'tag2.discussion.flagPosts'),
+  (4, 'tag2.discussion.editPosts'),
+  (4, 'tag2.discussion.hide'),
+  (4, 'tag2.discussion.hidePosts'),
+  (4, 'tag2.discussion.lock'),
+  (4, 'tag2.discussion.rename'),
+  (4, 'tag2.discussion.sticky'),
+  (4, 'tag2.discussion.tag'),
+  (4, 'tag2.discussion.viewFlags'),
+  (4, 'tag2.discussion.viewIpsPosts');
+COMMIT;
+SELECT id,name,is_restricted FROM tags WHERE is_restricted=1;
+SELECT COUNT(*) AS rechte_zeilen FROM group_permission WHERE permission LIKE 'tag%';
