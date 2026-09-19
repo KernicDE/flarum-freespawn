@@ -55,14 +55,20 @@ def icon(kind, x, y):
     return path
 
 
-def panel(kind, title, text, link):
-    band = 84
+BAND, LH, PILL_H = 84, 24, 42
+
+
+def natural_height(text):
+    lines = wrap(text, "inter-var.woff2", 16, W - 2 * PAD)
+    return BAND + 34 + (len(lines) - 1) * LH + 26 + PILL_H + 22
+
+
+def panel(kind, title, text, link, H):
+    """H = gemeinsame Höhe aller Panels; der Link-Button sitzt am unteren Rand."""
+    band, lh, pill_h = BAND, LH, PILL_H
     lines = wrap(text, "inter-var.woff2", 16, W - 2 * PAD)
     y_text = band + 34
-    lh = 24
-    y_pill = y_text + (len(lines) - 1) * lh + 26
-    pill_h = 42
-    H = y_pill + pill_h + 22
+    y_pill = H - 22 - pill_h
     parts = [f'<rect width="{W}" height="{H}" fill="#0c0c11"/>',
              '<linearGradient id="hb" x1="0" y1="0" x2="1" y2="0.3"><stop offset="0" stop-color="#c24a00"/><stop offset="0.55" stop-color="#a33d00"/><stop offset="1" stop-color="#6b2800"/></linearGradient>',
              f'<rect width="{W}" height="{band}" fill="url(#hb)"/><rect y="{band - 3}" width="{W}" height="3" fill="#ff6d00"/>',
@@ -82,8 +88,9 @@ def panel(kind, title, text, link):
 
 
 def main():
+    H = max(natural_height(text) for _, _, text, _ in PANELS)
     for kind, title, text, link in PANELS:
-        svg, H = panel(kind, title, text, link)
+        svg, _ = panel(kind, title, text, link, H)
         base = os.path.join(OUT, f"panel-{kind}")
         with open(base + ".svg", "w", encoding="utf8") as f:
             f.write(svg)
