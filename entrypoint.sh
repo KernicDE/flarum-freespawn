@@ -45,7 +45,7 @@ chown -R www-data:www-data "$FLARUM_DIR" 2>/dev/null || true
 
 if [ ! -f "config.php" ]; then
     echo "[entrypoint] Flarum ist noch nicht installiert."
-    echo "[entrypoint] Bitte Setup-Wizard unter https://dlivr.it abschließen."
+    echo "[entrypoint] Bitte Setup-Wizard unter https://freespawn.de abschließen."
 fi
 
 exec "$@"

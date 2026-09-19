@@ -6,7 +6,7 @@
 
 set -e
 
-BASE_URL="${FORUM_BASE_URL:-https://dlivr.it}"
+BASE_URL="${FORUM_BASE_URL:-https://freespawn.de}"
 ADMIN_USER="${FLARUM_ADMIN_USER:-admin}"
 ADMIN_PASS="${FLARUM_ADMIN_PASSWORD:-}"
 
@@ -165,9 +165,9 @@ if [ -z "$NEWS_ID" ] || [ -z "$PUBLIC_ID" ]; then
 fi
 
 # --- Erste Diskussionen ---
-create_discussion "Willkommen bei dlivr.it" "$NEWS_ID" "<p>Willkommen im Forum! Hier findest du News, Ankündigungen und alles Wichtige rund um den Clan.</p>"
+create_discussion "Willkommen bei FreeSpawn" "$NEWS_ID" "<p>Willkommen im Forum! Hier findest du News, Ankündigungen und alles Wichtige rund um den Clan.</p>"
 create_discussion "Regeln und Richtlinien" "$PUBLIC_ID" "<p>1. Sei respektvoll.<br/>2. Kein Spam.<br/>3. Bewerbungen bitte nur im Tag 'applications'.</p>"
-create_discussion "Mumble-Anleitung" "$PUBLIC_ID" "<p>Verbinde dich mit <b>dlivr.it:64738</b>. Stell dich kurz vor oder beantrage im Forum die Clan-Mitgliedschaft für erweiterte Rechte.</p>"
-create_discussion "IRC-Channel" "$PUBLIC_ID" "<p>Unser IRC-Channel ist <b>#dlivr</b> auf Libera.Chat. Der Bot 'dit-bot' zeigt Mumble-Events und Forum-News an.</p>"
+create_discussion "Mumble-Anleitung" "$PUBLIC_ID" "<p>Verbinde dich mit <b>freespawn.de:64738</b>. Stell dich kurz vor oder beantrage im Forum die Clan-Mitgliedschaft für erweiterte Rechte.</p>"
+create_discussion "IRC-Channel" "$PUBLIC_ID" "<p>Unser IRC-Channel ist <b>#freespawn</b> auf Libera.Chat. Der Bot 'SpawnKeeper' zeigt Mumble-Events und Forum-News an.</p>"
 
 echo "[setup-content] Fertig. Bitte Rechte/Permissions anschließend in der Admin-UI prüfen."

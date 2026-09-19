@@ -1,7 +1,9 @@
 services:
   mariadb:
-    image: mariadb:11
-    container_name: flarum-mariadb-dlivr-it
+    # Achtung: Die Datenbank wurde am 19.09.2026 auf MariaDB 12 aktualisiert (Datenverzeichnis
+    # 12.3.3). Ein Downgrade auf 11 startet nicht mehr.
+    image: mariadb:12-ubi10
+    container_name: flarum-mariadb-freespawn
     restart: unless-stopped
     env_file:
       - .env
@@ -21,8 +23,8 @@ services:
       start_period: 30s
 
   flarum:
-    image: ghcr.io/kernicde/dlivr-it-flarum:latest
-    container_name: flarum-app-dlivr-it
+    image: ghcr.io/kernicde/freespawn-flarum:latest
+    container_name: flarum-app-freespawn
     restart: unless-stopped
     env_file:
       - .env
@@ -30,14 +32,14 @@ services:
       - ./data/flarum:/var/www/html
     networks:
       - default
-      - dlivr-net
+      - freespawn-net
     depends_on:
       mariadb:
         condition: service_healthy
 
   nginx:
     image: nginx:alpine
-    container_name: flarum-nginx-dlivr-it
+    container_name: flarum-nginx-freespawn
     restart: unless-stopped
     volumes:
       - ./data/flarum:/var/www/html:ro
@@ -45,33 +47,52 @@ services:
     networks:
       - default
       - proxy
-      - dlivr-net
+      - freespawn-net
     depends_on:
       - flarum
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
-      - "traefik.http.routers.dlivr-it.rule=Host(`dlivr.it`) || Host(`www.dlivr.it`)"
-      - "traefik.http.routers.dlivr-it.entrypoints=websecure"
-      - "traefik.http.routers.dlivr-it.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.dlivr-it.service=dlivr-it-flarum"
-      - "traefik.http.services.dlivr-it-flarum.loadbalancer.server.port=80"
-      - "traefik.http.services.dlivr-it-flarum.loadbalancer.server.scheme=http"
-      - "traefik.http.routers.dlivr-it-www-redirect.rule=Host(`www.dlivr.it`)"
-      - "traefik.http.routers.dlivr-it-www-redirect.entrypoints=web"
-      - "traefik.http.routers.dlivr-it-www-redirect.middlewares=dlivr-it-redirect"
-      - "traefik.http.middlewares.dlivr-it-redirect.redirectregex.regex=^https?://www\\.(.*)"
-      - "traefik.http.middlewares.dlivr-it-redirect.redirectregex.replacement=https://$${1}"
-      - "traefik.http.middlewares.dlivr-it-redirect.redirectregex.permanent=true"
-      - "traefik.http.routers.dlivr-it-http.rule=Host(`dlivr.it`) || Host(`www.dlivr.it`)"
-      - "traefik.http.routers.dlivr-it-http.entrypoints=web"
-      - "traefik.http.routers.dlivr-it-http.middlewares=dlivr-it-https"
-      - "traefik.http.middlewares.dlivr-it-https.redirectscheme.scheme=https"
+      # Haupt-Domain freespawn.de
+      - "traefik.http.routers.freespawn.rule=Host(`freespawn.de`)"
+      - "traefik.http.routers.freespawn.entrypoints=websecure"
+      - "traefik.http.routers.freespawn.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.freespawn.service=freespawn-flarum"
+      - "traefik.http.services.freespawn-flarum.loadbalancer.server.port=80"
+      - "traefik.http.services.freespawn-flarum.loadbalancer.server.scheme=http"
+      # www.freespawn.de -> freespawn.de (HTTPS und HTTP)
+      - "traefik.http.routers.freespawn-www.rule=Host(`www.freespawn.de`)"
+      - "traefik.http.routers.freespawn-www.entrypoints=websecure"
+      - "traefik.http.routers.freespawn-www.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.freespawn-www.middlewares=freespawn-www-redirect"
+      - "traefik.http.routers.freespawn-www.service=freespawn-flarum"
+      - "traefik.http.middlewares.freespawn-www-redirect.redirectregex.regex=^https?://www\\.(.*)"
+      - "traefik.http.middlewares.freespawn-www-redirect.redirectregex.replacement=https://$${1}"
+      - "traefik.http.middlewares.freespawn-www-redirect.redirectregex.permanent=true"
+      # HTTP -> HTTPS
+      - "traefik.http.routers.freespawn-http.rule=Host(`freespawn.de`) || Host(`www.freespawn.de`)"
+      - "traefik.http.routers.freespawn-http.entrypoints=web"
+      - "traefik.http.routers.freespawn-http.middlewares=freespawn-https"
+      - "traefik.http.middlewares.freespawn-https.redirectscheme.scheme=https"
+      # Alte Domain dlivr.it (und www) -> freespawn.de, dauerhaft, Pfad bleibt erhalten
+      # (alte Links in IRC, Forum und Suchmaschinen funktionieren weiter)
+      - "traefik.http.routers.freespawn-legacy.rule=Host(`dlivr.it`) || Host(`www.dlivr.it`)"
+      - "traefik.http.routers.freespawn-legacy.entrypoints=websecure"
+      - "traefik.http.routers.freespawn-legacy.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.freespawn-legacy.middlewares=freespawn-legacy-redirect"
+      - "traefik.http.routers.freespawn-legacy.service=freespawn-flarum"
+      - "traefik.http.routers.freespawn-legacy-http.rule=Host(`dlivr.it`) || Host(`www.dlivr.it`)"
+      - "traefik.http.routers.freespawn-legacy-http.entrypoints=web"
+      - "traefik.http.routers.freespawn-legacy-http.middlewares=freespawn-legacy-redirect"
+      - "traefik.http.routers.freespawn-legacy-http.service=freespawn-flarum"
+      - "traefik.http.middlewares.freespawn-legacy-redirect.redirectregex.regex=^https?://(?:www\\.)?dlivr\\.it(.*)"
+      - "traefik.http.middlewares.freespawn-legacy-redirect.redirectregex.replacement=https://freespawn.de$${1}"
+      - "traefik.http.middlewares.freespawn-legacy-redirect.redirectregex.permanent=true"
 
 networks:
   default:
-    name: flarum-dlivr-it-net
+    name: flarum-freespawn-net
   proxy:
     external: true
-  dlivr-net:
+  freespawn-net:
     external: true

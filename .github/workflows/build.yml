@@ -6,7 +6,7 @@ on:
   workflow_dispatch: {}
 
 env:
-  IMAGE_NAME: ghcr.io/kernicde/dlivr-it-flarum
+  IMAGE_NAME: ghcr.io/kernicde/freespawn-flarum
 
 jobs:
   build-and-push:
