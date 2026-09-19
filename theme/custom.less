@@ -277,7 +277,7 @@ input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
   height: 3px;
   background: linear-gradient(90deg, @accent 0%, rgba(255, 109, 0, 0) 70%);
 }
-.Hero .container {
+.WelcomeHero .container {
   padding-top: 2.5rem;
   padding-bottom: 2.25rem;
 }
@@ -307,6 +307,33 @@ input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
 }
 .Hero-close:hover {
   opacity: 1;
+}
+
+// Diskussions- und Themen-Leiste (Kategorie, Board, Titel): kompakt. Kategorie/Board
+// und Titel stehen in einer Zeile (bei schmalem Platz umbrechend) statt übereinander,
+// das spart gut zwei Drittel der Höhe.
+.DiscussionHero .container {
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
+}
+.DiscussionHero-items {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem 0.9rem;
+}
+.DiscussionHero .item-title {
+  margin-top: 0;
+}
+.DiscussionHero-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.TagHero .container {
+  padding-top: 1.1rem;
+  padding-bottom: 1rem;
 }
 
 // ---------- Seitenleiste ----------
@@ -554,6 +581,33 @@ textarea.FormControl {
 }
 
 // ---------- Beiträge ----------
+// Lesbarkeit: linksbündig (Flattersatz) mit begrenzter Zeilenlänge (~68 Zeichen). Blocksatz
+// wurde getestet und verworfen: er reißt auf schmalen Spalten (Handy) große Lücken, zieht
+// auch Überschriften und Listen auseinander, und die Silbentrennung hängt vom Wörterbuch
+// des Browsers ab. Code, Tabellen und Bilder behalten die volle Breite.
+.Post-body {
+  text-wrap: pretty;   // vermeidet einzelne Wörter in der letzten Zeile
+}
+.Post-body > p,
+.Post-body > ul,
+.Post-body > ol,
+.Post-body > blockquote,
+.Post-body > h1,
+.Post-body > h2,
+.Post-body > h3,
+.Post-body > h4 {
+  max-width: 68ch;
+}
+
+// Abstand zur Leiste darüber und Innenabstand der Beitragskarte (Flarum lässt Avatar
+// links und Text rechts direkt am Kartenrand sitzen).
+.DiscussionPage-discussion > .container {
+  padding-top: 1.25rem;
+}
+.DiscussionPage-stream .PostStream {
+  padding-left: 1rem;
+  padding-right: 1.75rem;
+}
 .Post-body {
   font-size: 1rem;
   line-height: 1.7;
