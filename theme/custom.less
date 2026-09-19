@@ -362,6 +362,15 @@ input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
   background: #1f1a24;
   border-color: @accent;
 }
+// Das Thread-Menü (Folgen, Umbenennen, ...) ragt aus der Karte heraus. Die
+// Karten sind positioniert (position: relative), spätere Karten würden das
+// Menü sonst überdecken - bei Hover kommt durch transform sogar ein eigener
+// Stapelkontext dazu. Die aktive Karte liegt deshalb über ihren Nachbarn.
+.DiscussionListItem:hover,
+.DiscussionListItem:focus-within,
+.DiscussionListItem:has(.Dropdown.open, .open) {
+  z-index: 10;
+}
 .DiscussionListItem-title {
   font-size: 1.0625rem;
   font-weight: 600;
