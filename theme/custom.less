@@ -189,7 +189,7 @@ input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
   box-shadow: 0 6px 28px rgba(255, 109, 0, 0.16), 0 2px 8px rgba(0, 0, 0, 0.55);
 }
 .Header-title {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
 }
 .Header-title a, #home-link {
   display: inline-flex;
@@ -197,9 +197,27 @@ input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
   color: #ffffff;
   font-family: @font-display;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: 0.03em;
   text-decoration: none;
+}
+// Desktop-Kopfleiste: etwas höher, mit mehr Luft unter Suchfeld und Buttons (unten 10px
+// statt 2-4px). Der Titel steht in der Mitte der ganzen Leiste, nicht nur der Zeile mit
+// den Controls. --header-height steuert auch Seiten-Abstand und die klebende Navigation.
+@media (min-width: 768px) {
+  html:root {
+    --header-height: 60px;
+  }
+  .App-header {
+    padding: 8px 8px 10px;
+  }
+  .App-header .Header-title {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    margin-bottom: 0;
+    line-height: 1;
+    transform: translateY(1px);   // Mitte der Leiste (60px - 2px Rand) statt der Controls-Zeile
+  }
 }
 // kleines Markenzeichen vor dem Titel
 #home-link::before {
@@ -213,6 +231,9 @@ input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
 }
 
 // Login / Registrieren: bleiben auf jedem Verlaufsabschnitt lesbar
+.App-header .item-logIn {
+  margin-left: 0.5rem;
+}
 .App-header .item-logIn .Button--link {
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.75);
@@ -302,6 +323,11 @@ input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
   line-height: 1.65;
   color: #d3d3e0;
 }
+// Eingeloggt (Flarum rendert dann `.item-session` im Header): Willkommensbanner ausblenden.
+// Gäste sehen ihn weiter (und können ihn per Schließen-Button selbst wegklicken).
+body:has(.Header-secondary .item-session) .WelcomeHero {
+  display: none;
+}
 .Hero-close {
   opacity: 0.85;
 }
@@ -325,6 +351,12 @@ input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
 }
 .DiscussionHero .item-title {
   margin-top: 0;
+}
+// Höhere Spezifität, sonst bringt das später geladene CSS der Tags-Extension den Kern-Rand
+// (margin-top: 15px) zurück und der Titel sitzt tiefer als die Tags.
+.DiscussionHero .DiscussionHero-items > .item-tags,
+.DiscussionHero .DiscussionHero-items > .item-title {
+  margin: 0;
 }
 .DiscussionHero-title {
   font-size: 1.25rem;
