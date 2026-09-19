@@ -368,6 +368,56 @@ body:has(.Header-secondary .item-session) .WelcomeHero {
   padding-bottom: 1rem;
 }
 
+// Desktop (ab 992px): die Leiste bleibt beim Scrollen unter der Kopfleiste stehen. Feste Höhe und
+// einzeiliger Titel (bei Überlänge mit "..."), damit die Versätze darunter eindeutig sind.
+@media (min-width: 992px) {
+  html:root {
+    --discussion-hero-height: 56px;
+  }
+  .DiscussionHero {
+    position: sticky;
+    top: var(--header-height);
+    z-index: 20;   // über den Beiträgen, unter Kopfleiste (1000), Themenliste-Panel und Menüs
+    height: var(--discussion-hero-height);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  }
+  .DiscussionHero .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .DiscussionHero .DiscussionHero-items {
+    flex-wrap: nowrap;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .DiscussionHero .DiscussionHero-items > .item-title {
+    min-width: 0;
+  }
+  .DiscussionHero-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  // Die klebende Beitrags-Navigation rechts (Antworten, Scrubber) beginnt unter der Leiste.
+  .DiscussionPage-nav {
+    top: calc(var(--header-height) + var(--discussion-hero-height));
+  }
+  // Flarum scrollt zu Beiträgen (Scrubber, "Neuester Beitrag", Links auf /d/1/5) mit dem Offset
+  // Kopfleistenhöhe + margin-top von .PostStream. Damit der Beitrag nicht unter der fixierten
+  // Leiste landet, wird dieser margin-top um deren Höhe vergrößert; der negative Rand am ersten
+  // Beitrag gleicht ihn optisch aus (die Ränder fallen zusammen: 10px, wie vorher).
+  .DiscussionPage-stream .PostStream {
+    margin-top: calc(10px + var(--discussion-hero-height));
+  }
+  .DiscussionPage-stream .PostStream > .PostStream-item:first-child {
+    margin-top: calc(-1 * var(--discussion-hero-height));
+  }
+}
+
 // ---------- Seitenleiste ----------
 .sideNav .Dropdown--select .Dropdown-menu > li > a {
   padding: 0.5rem 0.75rem 0.5rem 2.5rem;
