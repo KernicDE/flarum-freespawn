@@ -385,6 +385,40 @@ body:has(.Header-secondary .item-session) .WelcomeHero {
   background: @accent-soft;
   box-shadow: inset 3px 0 0 @accent;
 }
+// Senkrechte Sidebar (ab 992px): als Karte wie Diskussionsliste und Beiträge, statt einer
+// nackten Liste, deren Einträge ohne Abstand bis an den Rand laufen. Innenabstand, Lücken
+// zwischen den Einträgen, gerundeter Rand. Darunter (Tablet/Handy) zeigt Flarum die Navigation
+// waagerecht bzw. als Auswahl, dort bleibt alles wie im Kern.
+// Nur .IndexPage (Startseite und Kategorie-Seiten): die Themen-Seite (.TagsPage) hat im Kern
+// eine eigene, waagerechte Navigation. Der Kern setzt .sideNav UND .sideNav > ul auf 190px,
+// beide müssen gemeinsam breiter werden, sonst überlappt die Karte den Inhalt.
+@media (min-width: 992px) {
+  .IndexPage .sideNav {
+    margin-right: 1.75rem;
+  }
+  .IndexPage .sideNav,
+  .IndexPage .sideNav > ul {
+    width: 15rem;
+  }
+  .IndexPage .sideNav > ul > li.item-nav {
+    padding: 0.5rem;
+    background: @surface-1;
+    border: 1px solid @border;
+    border-radius: 10px;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 2px 10px rgba(0, 0, 0, 0.35);
+  }
+  .IndexPage .sideNav .Dropdown--select .Dropdown-menu > li {
+    margin-bottom: 2px;
+  }
+  .IndexPage .sideNav .Dropdown--select .Dropdown-menu > li:last-child {
+    margin-bottom: 0;
+  }
+  .IndexPage .sideNav .Dropdown--select .Dropdown-menu > .Dropdown-separator {
+    height: 1px;
+    margin: 0.5rem 0.5rem;
+    background: @border;
+  }
+}
 
 // ---------- Diskussionsliste als Karten ----------
 // Handy: Flarum zieht die Liste mit -15px an den Bildschirmrand. Als Karten
