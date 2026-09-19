@@ -378,14 +378,50 @@ input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
   font-size: 0.875rem;
 }
 
-// Liste: nur den ersten Tag als Chip zeigen; auf der Diskussionsseite
-// (Hero) bleiben alle Tags sichtbar. display:none entfernt die übrigen
-// nur optisch, der erste bleibt :first-child und wird explizit rund.
-.DiscussionListItem .TagsLabel .TagLabel:not(:first-child) {
-  display: none;
+// Liste: Kategorie und Board als verbundene Pille ("Community | Diskussion").
+// Jeder Thread hat genau eine Kategorie (Eltern-Tag, erster Chip) und ein
+// Board (Kind-Tag, `.TagLabel--child`). Die Kategorie ist dezenter (abgedunkelt),
+// das Board in voller Farbe. Mehr als zwei Chips (Altdaten, Admin-Umgehung der
+// Pflicht) werden ausgeblendet.
+.DiscussionListItem .TagsLabel {
+  display: inline-flex;
+  align-items: stretch;
+  white-space: nowrap;
+}
+.DiscussionListItem .TagsLabel .TagLabel {
+  border-radius: 0;
 }
 .DiscussionListItem .TagsLabel .TagLabel:first-child {
+  border-radius: 6px 0 0 6px;
+}
+.DiscussionListItem .TagsLabel .TagLabel:last-child {
+  border-radius: 0 6px 6px 0;
+}
+.DiscussionListItem .TagsLabel .TagLabel:first-child:last-child {
   border-radius: 6px;
+}
+.DiscussionListItem .TagsLabel .TagLabel:not(.TagLabel--child):not(:last-child) {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3));
+}
+.DiscussionListItem .TagsLabel .TagLabel:nth-child(n+3) {
+  display: none;
+}
+// Desktop: Flarum legt die Chips absolut rechts über den Titel (max. 150px,
+// ausgeblendet). Für Kategorie + Board ist das zu schmal und verdeckt lange
+// Titel; sie stehen stattdessen wie mobil in der Meta-Zeile unter dem Titel.
+@media (min-width: 768px) {
+  // Spezifität absichtlich höher: das CSS der Tags-Extension steht hinter
+  // dem Custom-LESS und würde sonst bei Gleichstand gewinnen.
+  .IndexPage .DiscussionListItem .DiscussionListItem-info > .item-tags,
+  .UserPage .DiscussionListItem .DiscussionListItem-info > .item-tags {
+    position: static;
+    max-width: none;
+    overflow: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
+    margin-right: 8px;
+    font-size: inherit;
+  }
 }
 
 // ---------- Tags ----------
@@ -486,14 +522,23 @@ textarea.FormControl {
   }
 }
 
+// Alle Tag-Farben sind auf weißen Text ausgelegt (Weiß >= 4,5:1). Flarum
+// wählt sonst je nach YIQ-Schwelle mal dunklen, mal hellen Text - bei
+// mittleren Tönen wird der dunkle Text dann zu schwach.
+.TagLabel.colored, .TagLabel--colored, .TagTile.colored, .TagHero--colored,
+.DiscussionHero--colored, .TagMention.colored, .TagMention--colored,
+.Button--tagColored {
+  --contrast-color: #ffffff;
+}
+
 // ---------- Themen-Kacheln (/tags) ----------
 .TagTile-description {
   font-size: 0.875rem;
-  opacity: 0.9;
+  opacity: 1;
 }
 .TagTile-lastPostedDiscussion {
   font-size: 0.8125rem;
-  opacity: 0.9;
+  opacity: 1;
 }
 .TagTile-lastPostedDiscussion time {
   font-size: 0.75rem;

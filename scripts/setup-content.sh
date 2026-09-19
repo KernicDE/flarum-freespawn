@@ -141,13 +141,13 @@ create_discussion() {
 }
 
 # --- Tags ---
-create_tag "news" "#D32F2F" "Ankündigungen und News"
-create_tag "public" "#1976D2" "Öffentlicher Bereich für Gäste"
-create_tag "gaming" "#388E3C" "Gaming, Matches und Server"
-create_tag "applications" "#FBC02D" "Bewerbungen"
-create_tag "tech" "#7B1FA2" "Technik, Server und Entwicklung"
-create_tag "internal" "#E64A19" "Clan-interne Themen"
-create_tag "officers" "#5D4037" "Officer-Bereich"
+create_tag "news" "#AD5437" "Ankündigungen und News"
+create_tag "public" "#63728C" "Öffentlicher Bereich für Gäste"
+create_tag "gaming" "#4C8238" "Gaming, Matches und Server"
+create_tag "applications" "#9A6509" "Bewerbungen"
+create_tag "tech" "#007184" "Technik, Server und Entwicklung"
+create_tag "internal" "#8A5AA6" "Clan-interne Themen"
+create_tag "officers" "#A05481" "Officer-Bereich"
 
 # --- Gruppen ---
 create_group "Clan Member" "#1976D2" "fas fa-users"
