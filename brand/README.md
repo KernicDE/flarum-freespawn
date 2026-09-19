@@ -9,6 +9,7 @@ bzw. `#15151d` (heller Grund), Schrift Chakra Petch (Free 500, Spawn 700).
 - `dist/`: `mark-dark|light|header.svg` (nur Zeichen), `logo-dark|light.svg` (Zeichen + Schriftzug), `favicon.svg/.ico/-16|32|48.png`,
   `apple-touch-icon.png`, `icon-192|512.png`, `profile-1024.png` (Profilbild, quadratisch), `social-preview.svg/.png` (1200x630).
 - Favicon hat einen dickeren Ring und etwas kleineren Punkt/Dreieck, damit bei 16 px alles getrennt bleibt.
+- `panels.py` erzeugt die Twitch-Panel-Bilder (320 px breit: Forum, IRC, Mumble, Mastodon) nach `dist/twitch-panels/`.
 - Einspielen ins Forum: `scripts/deploy-brand.sh` (Dateien nach `public/brand/`, Setting `custom_header` aus `custom_header.html`,
   Sicherung + Rollback), danach `scripts/deploy-theme.sh` fuer das Zeichen in der Kopfleiste (`#home-link::before`).
   Bei Aenderungen an den Dateien die `?v=1`-Version in `custom_header.html` und `theme/custom.less` hochzaehlen (nginx cached 1 Jahr).
