@@ -14,6 +14,13 @@ nicht mehr verwendet, die Dateien können dort bleiben.
 
 ## Einspielen
 
+**Empfohlen: `scripts/deploy-theme.sh`.** Es sichert den Live-Wert, testet vorab mit less.php (dem Compiler
+von Flarum, strenger als less.js), spielt ein, prüft Startseite/Themen/Diskussion/CSS und rollt bei einem
+Fehler automatisch zurück. Hintergrund: Ein Fehler beim Kompilieren macht die Live-Seite kaputt (HTTP 500).
+Bekannter Stolperstein: `calc()` mit Rechnen auf `var(...)` muss als `~"calc(...)"` maskiert werden.
+
+Von Hand (ohne Sicherheitsnetz):
+
 1. Schrift auf den Server legen (`public/fonts/` ist der Pfad, den nginx ausliefert):
 
    ```bash

@@ -404,17 +404,17 @@ body:has(.Header-secondary .item-session) .WelcomeHero {
   }
   // Die klebende Beitrags-Navigation rechts (Antworten, Scrubber) beginnt unter der Leiste.
   .DiscussionPage-nav {
-    top: calc(var(--header-height) + var(--discussion-hero-height));
+    top: ~"calc(var(--header-height) + var(--discussion-hero-height))";   // ~"..." : less.php wertet calc() sonst aus und bricht ab
   }
   // Flarum scrollt zu Beiträgen (Scrubber, "Neuester Beitrag", Links auf /d/1/5) mit dem Offset
   // Kopfleistenhöhe + margin-top von .PostStream. Damit der Beitrag nicht unter der fixierten
   // Leiste landet, wird dieser margin-top um deren Höhe vergrößert; der negative Rand am ersten
   // Beitrag gleicht ihn optisch aus (die Ränder fallen zusammen: 10px, wie vorher).
   .DiscussionPage-stream .PostStream {
-    margin-top: calc(10px + var(--discussion-hero-height));
+    margin-top: ~"calc(10px + var(--discussion-hero-height))";
   }
   .DiscussionPage-stream .PostStream > .PostStream-item:first-child {
-    margin-top: calc(-1 * var(--discussion-hero-height));
+    margin-top: ~"calc(-1 * var(--discussion-hero-height))";
   }
 }
 
