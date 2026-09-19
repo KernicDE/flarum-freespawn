@@ -646,6 +646,29 @@ textarea.FormControl {
   font-size: 0.75rem;
 }
 
+// ---------- Themenliste in der Diskussionsansicht ----------
+// Das Panel links (per Hover am Zurück-Pfeil eingeblendet, mit der Pinnnadel festsetzbar).
+// Der Kern setzt dort `.DiscussionPage-list .DiscussionListItem { margin:0; padding:0;
+// border-radius:0 }` - mit höherer Spezifität als die Karten-Regeln oben. Ergebnis waren
+// eckige Karten ohne Abstand, direkt am Panel-Rand. Hier: Innenabstand im Panel, wieder
+// gerundete Karten, Rand und Schatten zum Inhalt statt eines harten Kastens, und die
+// Meta-Zeile (Kategorie/Board, Autor) bricht um statt bei "Ker…" abgeschnitten zu werden.
+@media (min-width: 768px) {
+  .DiscussionPage-list {
+    padding: 0.75rem 0.75rem 2.5rem;
+    background: @bg;
+    border-top: 0;
+    border-right: 1px solid @border;
+    box-shadow: 8px 0 28px rgba(0, 0, 0, 0.55);
+  }
+  .DiscussionPage-list .DiscussionListItem {
+    border-radius: 10px;
+  }
+  .DiscussionPage-list .DiscussionListItem-info {
+    white-space: normal;
+  }
+}
+
 // ---------- Beiträge ----------
 // Lesbarkeit: linksbündig (Flattersatz) mit begrenzter Zeilenlänge (~68 Zeichen). Blocksatz
 // wurde getestet und verworfen: er reißt auf schmalen Spalten (Handy) große Lücken, zieht
