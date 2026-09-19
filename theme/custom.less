@@ -1,0 +1,530 @@
+// ============================================================
+// dlivr.it Gaming-Clan Theme v9
+//
+// Einfügen unter: Admin -> Aussehen -> Eigenes CSS/LESS
+// (Setting `custom_less`). Schriftdatei fonts/inter-var.woff2 muss
+// unter public/fonts/ liegen (siehe theme/README.md).
+//
+// Aufbau: Palette als Flarum-Variablen (html:root) statt Hex-Overrides
+// pro Klasse. Komponenten übernehmen die Farben dadurch selbst.
+//
+// Kontrast (WCAG AA, gemessen): Text auf allen Flächen >= 5,4:1,
+// Weiß im Header-Verlauf >= 4,9:1, Input-Rand >= 3,3:1.
+// Größen: Text in rem (folgt der Browser-Einstellung), px nur für
+// Ränder, Radien, Schatten.
+// ============================================================
+
+// ---------- Schriften (selbst gehostet) ----------
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/inter-var.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Chakra Petch';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/chakra-petch-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Chakra Petch';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/chakra-petch-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Chakra Petch';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/chakra-petch-700.woff2') format('woff2');
+}
+
+// ---------- Palette ----------
+@bg:            #0c0c11;   // Seitenhintergrund
+@surface-1:     #15151d;   // Karten
+@surface-2:     #1d1d28;   // Controls, Hover
+@surface-3:     #262633;   // Popups, Modals
+@border:        #2c2c3a;   // dekorative Trennlinien
+@border-strong: #6e6e88;   // Input-Ränder (>= 3:1)
+
+@text:          #f4f4f8;
+@text-muted:    #b9b9c9;
+@text-faint:    #9a9ab0;
+
+@accent:        #ff6d00;
+@accent-hover:  #ff8a33;
+@accent-active: #e05f00;
+@accent-soft:   rgba(255, 109, 0, 0.14);
+@accent-glow:   rgba(255, 109, 0, 0.35);
+
+@font-body:    'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+@font-display: 'Chakra Petch', 'Inter', system-ui, sans-serif;
+
+// ---------- Flarum-Variablen ----------
+// html:root (Spezifität 0,1,1) schlägt spätere :root-Blöcke aus
+// Extensions (z. B. --tag-bg von flarum/tags).
+html:root {
+  --primary-color: @accent;
+  --secondary-color: #5c2700;
+
+  --body-bg: @bg;
+  --body-bg-shaded: #08080b;
+  --body-bg-light: @surface-1;
+  --body-bg-faded: rgba(12, 12, 17, 0.93);
+
+  --text-color: @text;
+  --heading-color: @text;
+  --link-color: @accent;
+  --muted-color: @text-muted;
+  --muted-color-light: #c9c9d8;
+  --muted-more-color: @text-faint;
+  --muted-more-bg: rgba(154, 154, 176, 0.18);
+  --muted-more-bg-hover: rgba(154, 154, 176, 0.26);
+  --muted-more-bg-active: rgba(154, 154, 176, 0.34);
+  --muted-more-bg-disabled: rgba(154, 154, 176, 0.18);
+  --shadow-color: rgba(0, 0, 0, 0.55);
+  --error-color: #ff7b7b;
+  --validation-error-color: #ff7b7b;
+  --overlay-bg: rgba(8, 8, 12, 0.88);
+
+  --control-bg: @surface-2;
+  --control-bg-light: @surface-3;
+  --control-bg-shaded: #14141c;
+  --control-color: @text;
+  --control-danger-color: #ffb3b3;
+  --control-danger-bg: #3a1519;
+  --control-danger-bg-hover: #4a1a20;
+  --control-danger-bg-active: #5a2028;
+  --control-danger-bg-disabled: #3a1519;
+
+  --button-color: @text;
+  --button-bg: @surface-2;
+  --button-bg-hover: @surface-3;
+  --button-bg-active: #30303f;
+  --button-bg-disabled: @surface-2;
+  --button-primary-color: #14100c;
+  --button-primary-bg: @accent;
+  --button-primary-bg-hover: @accent-hover;
+  --button-primary-bg-active: @accent-active;
+  --button-primary-bg-disabled: @accent;
+  --button-inverted-color: @text;
+  --button-inverted-bg: @surface-1;
+  --button-inverted-bg-hover: @surface-2;
+  --button-inverted-bg-active: @surface-3;
+  --button-inverted-bg-disabled: @surface-1;
+
+  --hero-bg: @surface-1;
+  --hero-color: @text-muted;
+
+  --discussion-title-color: #c9c9d8;
+  --discussion-list-item-bg-hover: #1b1b26;
+  --usercard-bg: @surface-1;
+  --avatar-bg: @surface-3;
+  --code-bg: #101017;
+  --code-color: @text;
+  --tag-bg: @surface-2;
+  --tag-color: @text-muted;
+  --sidenav-color: @text-muted;
+  --sidenav-color-hover: #ffffff;
+  --sidenav-color-active: @accent;
+
+  // Header: Verlauf bleibt orange, Vordergrund ist durchgehend weiß.
+  --header-bg: #b84400;
+  --header-color: #ffffff;
+  --header-control-bg: rgba(0, 0, 0, 0.28);
+  --header-control-color: #ffffff;
+  --header-colored-color: #ffffff;
+  --header-colored-control-color: #ffffff;
+  --header-colored-control-bg: rgba(0, 0, 0, 0.28);
+  --header-colored-control-bg-shaded: rgba(0, 0, 0, 0.42);
+  --header-colored-control-bg-fadedin: rgba(0, 0, 0, 0.35);
+  --light-content-control-color: #ffffff;
+
+  --border-radius: 8px;
+}
+
+// ---------- Basis ----------
+html {
+  font-size: 100%;   // = Browser-Einstellung, Basis für rem
+}
+
+body {
+  background:
+    radial-gradient(1100px 420px at 50% -8%, rgba(255, 109, 0, 0.10), transparent 70%),
+    repeating-linear-gradient(135deg, rgba(255, 109, 0, 0.018) 0, rgba(255, 109, 0, 0.018) 2px, transparent 2px, transparent 48px),
+    @bg;
+  background-attachment: fixed;
+  color: @text;
+  font-family: @font-body;
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+.App-content {
+  background: transparent;
+}
+
+h1, h2, h3, h4, h5, h6,
+.Hero-title, .DiscussionListItem-title, .TagLabel, .Header-title {
+  font-family: @font-display;
+}
+
+a:focus-visible, button:focus-visible, .Button:focus-visible,
+input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid @accent;
+  outline-offset: 2px;
+}
+
+// ---------- Header ----------
+.App-header {
+  background-image: linear-gradient(120deg, #c24a00 0%, #a33d00 55%, #6b2800 100%);
+  border-bottom: 2px solid @accent;
+  box-shadow: 0 6px 28px rgba(255, 109, 0, 0.16), 0 2px 8px rgba(0, 0, 0, 0.55);
+}
+.Header-title {
+  font-size: 1.125rem;
+}
+.Header-title a, #home-link {
+  display: inline-flex;
+  align-items: center;
+  color: #ffffff;
+  font-family: @font-display;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+// kleines Markenzeichen vor dem Titel
+#home-link::before {
+  content: '';
+  width: 6px;
+  height: 20px;
+  margin-right: 18px;
+  background: #ffffff;
+  transform: skewX(-18deg);
+  box-shadow: 9px 0 0 rgba(255, 255, 255, 0.45);
+}
+
+// Login / Registrieren: bleiben auf jedem Verlaufsabschnitt lesbar
+.App-header .item-logIn .Button--link {
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  font-weight: 600;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.App-header .item-logIn .Button--link:hover,
+.App-header .item-logIn .Button--link:focus {
+  background: rgba(255, 255, 255, 0.16) !important;
+  color: #ffffff;
+}
+.App-header .item-signUp .Button--link {
+  background: #ffffff !important;
+  color: #6b2800 !important;
+  font-weight: 700;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.App-header .item-signUp .Button--link:hover,
+.App-header .item-signUp .Button--link:focus {
+  background: #ffe6d1 !important;
+  color: #6b2800 !important;
+}
+.App-header .Search-input .FormControl {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+.App-header .Search-input .FormControl::placeholder {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+// Handy-Menü: der Drawer enthält selbst den <header class="App-header">
+// (auf dem Desktop ist .App-drawer nur ein Wrapper um den Haupt-Header!).
+// Darum nur in der Handy-Ansicht: der Verlauf zieht sich dort über die
+// ganze Drawer-Fläche statt nur über den Kopfbereich. Weiß bleibt auf
+// beiden Enden >= 4,9:1.
+@media (max-width: 767.98px) {
+  .App-drawer {
+    background-image: linear-gradient(180deg, #c24a00 0%, #8a3300 100%);
+  }
+  .App-drawer .App-header {
+    background: transparent;
+    border-bottom: 0;
+    box-shadow: none;
+  }
+}
+
+// ---------- Hero ----------
+.WelcomeHero {
+  position: relative;
+  background:
+    radial-gradient(760px 240px at 12% -30%, rgba(255, 109, 0, 0.34), transparent 65%),
+    linear-gradient(180deg, #1b1622 0%, @surface-1 100%);
+  border-bottom: 1px solid @border;
+}
+.WelcomeHero::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 3px;
+  background: linear-gradient(90deg, @accent 0%, rgba(255, 109, 0, 0) 70%);
+}
+.Hero .container {
+  padding-top: 2.5rem;
+  padding-bottom: 2.25rem;
+}
+.Hero-title {
+  font-family: @font-display;
+  letter-spacing: 0.02em;
+}
+// Farbe/Schreibweise nur für den Willkommens-Hero. Tag- und Diskussions-
+// Heroes haben farbige Hintergründe und setzen ihre Textfarbe selbst
+// (--contrast-color), die darf nicht überschrieben werden.
+.WelcomeHero h1, .WelcomeHero .Hero-title {
+  font-size: ~"clamp(1.6rem, 1.1rem + 2vw, 2.4rem)";
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+.WelcomeHero .Hero-subtitle {
+  margin-top: 0.75rem;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: #d3d3e0;
+}
+.Hero-close {
+  opacity: 0.85;
+}
+.Hero-close:hover {
+  opacity: 1;
+}
+
+// ---------- Seitenleiste ----------
+.sideNav .Dropdown--select .Dropdown-menu > li > a {
+  padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+.sideNav .Dropdown--select .Dropdown-menu > li > a .Button-icon {
+  margin-left: -1.75rem;
+}
+.sideNav .Dropdown--select .Dropdown-menu > li > a:hover {
+  background: @surface-2;
+}
+.sideNav .Dropdown--select .Dropdown-menu > li.active > a {
+  background: @accent-soft;
+  box-shadow: inset 3px 0 0 @accent;
+}
+
+// ---------- Diskussionsliste als Karten ----------
+// Handy: Flarum zieht die Liste mit -15px an den Bildschirmrand. Als Karten
+// sollen sie stattdessen mit dem normalen Seitenrand eingerückt bleiben.
+@media (max-width: 767.98px) {
+  .DiscussionList {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+.DiscussionList {
+  background: transparent;
+  border: 0;
+}
+.DiscussionList-discussions > li {
+  margin-bottom: 0.625rem;
+}
+.DiscussionListItem {
+  margin-left: 0;    // Kernwert -15px würde die Karte über die Toolbar hinausziehen
+  margin-right: 0;
+  background: @surface-1;
+  border: 1px solid @border;
+  border-radius: 10px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 2px 10px rgba(0, 0, 0, 0.35);
+  transition: background-color .15s ease, border-color .15s ease, box-shadow .2s ease, transform .2s ease;
+}
+.DiscussionListItem:hover {
+  background: #1b1b26;
+  border-color: rgba(255, 109, 0, 0.6);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 109, 0, 0.22);
+  transform: translateY(-1px);
+}
+.DiscussionListItem.active {
+  background: #1f1a24;
+  border-color: @accent;
+}
+.DiscussionListItem-title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.DiscussionListItem-info {
+  font-size: 0.8125rem;
+}
+.DiscussionListItem-info .item-excerpt {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.DiscussionListItem-count {
+  font-size: 0.875rem;
+}
+
+// Liste: nur den ersten Tag als Chip zeigen; auf der Diskussionsseite
+// (Hero) bleiben alle Tags sichtbar. display:none entfernt die übrigen
+// nur optisch, der erste bleibt :first-child und wird explizit rund.
+.DiscussionListItem .TagsLabel .TagLabel:not(:first-child) {
+  display: none;
+}
+.DiscussionListItem .TagsLabel .TagLabel:first-child {
+  border-radius: 6px;
+}
+
+// ---------- Tags ----------
+.TagLabel {
+  padding: 0.15em 0.6em;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: 6px;
+}
+
+// ---------- Buttons ----------
+.Button {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: none;
+  border-radius: 8px;
+}
+.Button--primary {
+  background: linear-gradient(180deg, @accent-hover 0%, @accent 100%);
+  border-color: @accent;
+  font-family: @font-display;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 2px 10px rgba(255, 109, 0, 0.25);
+}
+.Button--primary:hover {
+  background: @accent-hover;
+  box-shadow: 0 0 18px rgba(255, 109, 0, 0.45);
+}
+.Button--primary:active {
+  transform: translateY(1px);
+}
+.Button-label {
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: unset;
+  max-width: none;
+}
+.Button .icon, .Header-controls .Button .icon, .item-nav .icon,
+.Dropdown-toggle .icon, .NotificationsDropdown .icon {
+  opacity: 1;
+}
+
+// ---------- Formulare ----------
+.FormControl {
+  height: 2.5rem;
+  padding: 0.5rem 0.8rem;
+  font-size: 1rem;
+  color: @text;
+  background: @surface-2;
+  border: 1px solid @border-strong;
+  border-radius: 8px;
+}
+.FormControl:focus {
+  color: @text;
+  background: @surface-2;
+  border-color: @accent;
+  box-shadow: 0 0 0 3px @accent-glow;
+}
+.FormControl::placeholder {
+  color: @text-faint;
+}
+textarea.FormControl {
+  height: auto;
+}
+.Search-input .FormControl {
+  padding-left: 2.25rem;   // Platz für das Such-Icon
+}
+
+// ---------- Container, Menüs, Modals ----------
+.Dropdown-menu, .Search-results, .Notifications {
+  background: @surface-3;
+  border: 1px solid @border;
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+  font-size: 0.9375rem;
+}
+.Modal-content {
+  background: @surface-1;
+  border: 1px solid @border;
+  border-radius: 12px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+}
+.DiscussionPage-stream {
+  background: @surface-1;
+  border: 1px solid @border;
+  border-radius: 10px;
+}
+
+// Menüeinträge sind <button>/<a> und erben die Menü-Schriftgröße nicht.
+@media (min-width: 768px) {
+  .Dropdown-menu > li > a,
+  .Dropdown-menu > li > button,
+  .Dropdown-menu > li > span {
+    font-size: 0.9375rem;
+  }
+}
+
+// ---------- Themen-Kacheln (/tags) ----------
+.TagTile-description {
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+.TagTile-lastPostedDiscussion {
+  font-size: 0.8125rem;
+  opacity: 0.9;
+}
+.TagTile-lastPostedDiscussion time {
+  font-size: 0.75rem;
+}
+
+// ---------- Beiträge ----------
+.Post-body {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: @text;
+}
+.Post-header, .PostMeta, time {
+  font-size: 0.875rem;
+}
+
+// ---------- Kleinkram ----------
+.Badge--icon svg {
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.6));
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: @bg; }
+::-webkit-scrollbar-thumb { background: #3a3a4a; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: @accent; }
+::selection { background: @accent-glow; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+  .DiscussionListItem:hover {
+    transform: none;
+  }
+}

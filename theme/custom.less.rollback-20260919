@@ -1,0 +1,298 @@
+
+// ============================================================
+// dlivr.it Gaming-Clan Theme v8
+// - Fonts selbst gehostet, Button-Fix (v6/v7) beibehalten
+// - FIX: clip-path auf .App-header hat alle Dropdown-Menüs (Glocke,
+//   Sprache, Nutzermenü) mit weggeschnitten, weil sie als Kind-Elemente
+//   im Header rendern - clip-path clippt IMMER auch Nachfahren, egal wie
+//   sie positioniert sind. Dropdowns öffneten sich technisch, waren aber
+//   unsichtbar. Chamfer-Optik jetzt über ein eigenständiges ::after-
+//   Dreieck gelöst, das nichts anderes beeinflusst.
+// ============================================================
+
+@font-face {
+  font-family: 'Rajdhani';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/rajdhani-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Rajdhani';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/rajdhani-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Rajdhani';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/rajdhani-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Rajdhani';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/rajdhani-700.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Chakra Petch';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/chakra-petch-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Chakra Petch';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/chakra-petch-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Chakra Petch';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/chakra-petch-700.woff2') format('woff2');
+}
+
+@dlivr-bg: #0d0d10;
+@dlivr-bg-raised: #16161b;
+@dlivr-bg-input: #1e1e25;
+@dlivr-text: #f2f2f5;
+@dlivr-text-muted: #b0b0bc;
+@dlivr-border: #33333d;
+@dlivr-accent: #FF6D00;
+@dlivr-accent-hover: #FF8A33;
+@dlivr-accent-glow: fade(@dlivr-accent, 45%);
+
+a, button, .Button, .FormControl, input, textarea, .DiscussionListItem {
+  transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease, color .15s ease;
+}
+
+body, #app, .App {
+  background:
+    repeating-linear-gradient(135deg, rgba(255,109,0,0.015) 0px, rgba(255,109,0,0.015) 2px, transparent 2px, transparent 48px),
+    @dlivr-bg !important;
+  color: @dlivr-text;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+h1, h2, h3, h4, h5, h6,
+.App-title, .Hero-title, .DiscussionListItem-title,
+.item-nav, .TagLabel {
+  font-family: 'Chakra Petch', sans-serif;
+}
+
+a:focus-visible, button:focus-visible, .Button:focus-visible,
+input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid @dlivr-accent;
+  outline-offset: 2px;
+}
+
+// Header: KEIN clip-path mehr (clippt sonst Dropdown-Menüs unsichtbar).
+// Die "geschrägte" Optik kommt jetzt von einem eigenständigen Dreieck
+// unten rechts, das per pointer-events:none nie im Weg ist und nichts
+// anderes beeinflusst.
+.App-header {
+  background-image: linear-gradient(135deg, darken(@dlivr-accent, 5%) 0%, #5c2700 100%);
+  border-bottom: 2px solid @dlivr-accent;
+  position: relative;
+}
+.App-header::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  width: 28px;
+  height: 14px;
+  background: @dlivr-bg;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  pointer-events: none;
+}
+.App-title {
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.DiscussionList, .DiscussionPage-stream, .Dropdown-menu, .Modal-content,
+.Search-results, .Notifications, .item-navigation {
+  background: @dlivr-bg-raised;
+  border: 1px solid @dlivr-border;
+}
+
+.muted-color,
+.DiscussionListItem-info,
+.DiscussionListItem-content,
+.Post-header .muted-color,
+.PostUser-badges,
+.item-nav .muted-color,
+.Dropdown-menu .muted-color,
+time, .PostMeta {
+  color: @dlivr-text-muted !important;
+}
+
+.DiscussionListItem-title, .item-nav, .Notification-content {
+  color: @dlivr-text;
+  font-weight: 600;
+}
+
+.Post-body {
+  color: @dlivr-text;
+}
+
+// Farbiger linker Rand bei Hover/Active über ein eigenständiges ::before
+// statt border-left/padding-left auf .DiscussionListItem selbst - Flarums
+// Avatar-Positionierung in der Liste hängt über negative Margins exakt am
+// Standard-padding-left (15px) dieses Elements. Ein eigenes padding-left
+// hier verschiebt die Avatare aus dem sichtbaren Bereich der Liste heraus.
+.DiscussionListItem {
+  position: relative;
+}
+.DiscussionListItem::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: transparent;
+  transition: background-color .2s ease;
+}
+.DiscussionListItem:hover, .DiscussionListItem--active {
+  background: fade(@dlivr-accent, 6%);
+}
+.DiscussionListItem:hover::before, .DiscussionListItem--active::before {
+  background: @dlivr-accent;
+}
+
+// Kleiner Abstand zwischen Avatar/Zeileninhalt und dem linken Rand der
+// Liste. Absichtlich hier am Listen-Container statt an .DiscussionListItem
+// selbst - dessen padding-left ist auf die Avatar-Positionierung
+// (negative Margins) kalibriert, siehe Kommentar oben.
+.DiscussionList {
+  padding-left: 10px;
+}
+
+// Liste: nur den ersten zugeordneten Tag als Badge zeigen, nicht alle
+// weiteren Sekundär-Tags (Flarum kennzeichnet nach dem Speichern keinen
+// Tag mehr als "Haupt-Tag" - das ist daher rein die Reihenfolge, in der
+// die Tags gespeichert wurden). Auf der Diskussionsseite selbst (Hero)
+// bleiben weiterhin alle Tags sichtbar.
+.DiscussionListItem .TagsLabel .TagLabel:not(:first-child) {
+  display: none;
+}
+// display:none entfernt die restlichen Tags nur optisch, nicht aus dem
+// DOM - der sichtbare erste Tag bleibt daher :first-child, wird aber nie
+// :last-child und behält Flarums "mehrere Tags aneinandergereiht"-Form
+// (nur links abgerundet: border-radius 4px 0 0 4px statt der vollen
+// Pille bei genau einem Tag). Da er jetzt optisch alleine steht, wird er
+// hier explizit wieder komplett abgerundet.
+.DiscussionListItem .TagsLabel .TagLabel:first-child {
+  border-radius: 4px;
+}
+
+.Header-controls .Button .icon,
+.Header-controls a .icon,
+.item-nav .icon,
+.Dropdown-toggle .icon,
+.NotificationsDropdown .icon,
+.Button .icon {
+  opacity: 1;
+  color: @dlivr-text;
+}
+
+.FormControl, input, textarea, .TextEditor-editor, .Search-input {
+  background: @dlivr-bg-input !important;
+  color: @dlivr-text !important;
+  border: 1px solid @dlivr-border !important;
+  border-radius: 3px !important;
+}
+.FormControl:focus, input:focus, textarea:focus {
+  border-color: @dlivr-accent !important;
+  box-shadow: 0 0 0 3px @dlivr-accent-glow !important;
+}
+.FormControl::placeholder, input::placeholder, textarea::placeholder {
+  color: fade(@dlivr-text-muted, 70%);
+}
+
+.TagLabel {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.75px;
+  border-radius: 2px;
+}
+
+a, .DiscussionListItem-title a {
+  color: @dlivr-accent;
+}
+a:hover {
+  color: @dlivr-accent-hover;
+}
+
+.Hero {
+  background: @dlivr-bg-raised;
+  border-bottom: 3px solid @dlivr-accent;
+}
+
+.Button, .Button--primary, .Dropdown-menu, .Modal-content, .FormControl {
+  border-radius: 4px;
+}
+
+.Button--primary,
+.Button--primary .Button-label {
+  text-transform: none !important;
+  font-size: 14px !important;
+  letter-spacing: normal !important;
+}
+.Button--primary {
+  background: @dlivr-accent;
+  border-color: @dlivr-accent;
+  color: #14100c;
+  font-weight: 700;
+  font-family: 'Chakra Petch', sans-serif;
+  white-space: nowrap;
+  width: auto;
+  min-width: 0;
+  overflow: visible;
+}
+.Button--primary:hover {
+  background: @dlivr-accent-hover;
+  box-shadow: 0 0 16px fade(@dlivr-accent, 40%);
+}
+.Button--primary:active {
+  transform: translateY(1px);
+}
+
+.Button-label {
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: unset;
+  max-width: none;
+}
+
+.Badge--icon svg {
+  filter: drop-shadow(0 0 3px rgba(0,0,0,0.6));
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: @dlivr-bg; }
+::-webkit-scrollbar-thumb { background: @dlivr-border; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: @dlivr-accent; }
+
+::selection {
+  background: @dlivr-accent-glow;
+}
+
+
+
+
