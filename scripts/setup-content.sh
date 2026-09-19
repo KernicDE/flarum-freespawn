@@ -97,12 +97,13 @@ create_group() {
     local name="$1"
     local color="$2"
     local icon="$3"
+    local plural="${4:-${name}s}"
     if group_exists "$name"; then
         echo "[setup-content] Gruppe '${name}' existiert bereits, überspringe."
         return 0
     fi
     local payload
-    payload=$(printf '{"data":{"type":"groups","attributes":{"nameSingular":"%s","namePlural":"%ss","color":"%s","icon":"%s"}}}' "$name" "$name" "$color" "$icon")
+    payload=$(printf '{"data":{"type":"groups","attributes":{"nameSingular":"%s","namePlural":"%s","color":"%s","icon":"%s"}}}' "$name" "$plural" "$color" "$icon")
     echo "[setup-content] Erstelle Gruppe '${name}'..."
     curl -sS -X POST "${BASE_URL}/api/groups" \
         -H "$AUTH" -H "Content-Type: application/json" \
@@ -147,11 +148,13 @@ create_tag "gaming" "#4C8238" "Gaming, Matches und Server"
 create_tag "applications" "#9A6509" "Bewerbungen"
 create_tag "tech" "#007184" "Technik, Server und Entwicklung"
 create_tag "internal" "#8A5AA6" "Clan-interne Themen"
-create_tag "officers" "#A05481" "Officer-Bereich"
+create_tag "moderation" "#A05481" "Moderatoren-Bereich"
 
 # --- Gruppen ---
-create_group "Clan Member" "#1976D2" "fas fa-users"
-create_group "Officer" "#D32F2F" "fas fa-shield-alt"
+# Rollen: Gast > Nutzer > Mitglied > Moderator > Admin. Gast, Moderator und Admin liefert Flarum selbst;
+# die Kerngruppe "Member" (Id 3) wird im Admin-Bereich in "Nutzer" umbenannt (sonst zeigt Flarum sie
+# als "Mitglied"). "Officer" gibt es nicht - das ist der Moderator.
+create_group "Mitglied" "#1976D2" "fas fa-users" "Mitglieder"
 
 # --- Tag-IDs für Diskussionen ermitteln ---
 NEWS_ID=$(get_tag_id "news")
@@ -166,8 +169,8 @@ fi
 
 # --- Erste Diskussionen ---
 create_discussion "Willkommen bei FreeSpawn" "$NEWS_ID" "<p>Willkommen im Forum! Hier findest du News, Ankündigungen und alles Wichtige rund um den Clan.</p>"
-create_discussion "Regeln und Richtlinien" "$PUBLIC_ID" "<p>1. Sei respektvoll.<br/>2. Kein Spam.<br/>3. Bewerbungen bitte nur im Tag 'applications'.</p>"
-create_discussion "Mumble-Anleitung" "$PUBLIC_ID" "<p>Verbinde dich mit <b>freespawn.de:64738</b>. Stell dich kurz vor oder beantrage im Forum die Clan-Mitgliedschaft für erweiterte Rechte.</p>"
+create_discussion "Regeln und Richtlinien" "$PUBLIC_ID" "<p>1. Sei respektvoll.<br/>2. Kein Spam.<br/>3. Bewerbungen bitte nur im Board 'Bewerbungen'.</p>"
+create_discussion "Mumble-Anleitung" "$PUBLIC_ID" "<p>Verbinde dich mit <b>freespawn.de:64738</b>. Stell dich kurz vor oder beantrage im Forum die Mitgliedschaft für erweiterte Rechte.</p>"
 create_discussion "IRC-Channel" "$PUBLIC_ID" "<p>Unser IRC-Channel ist <b>#freespawn</b> auf Libera.Chat. Der Bot 'SpawnKeeper' zeigt Mumble-Events und Forum-News an.</p>"
 
 echo "[setup-content] Fertig. Bitte Rechte/Permissions anschließend in der Admin-UI prüfen."
