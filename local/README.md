@@ -1,9 +1,15 @@
-# Lokale Flarum-Erweiterung: Links in der Kopfleiste
+# Lokale Flarum-Erweiterung: Links in der Kopfleiste + Head-Tags
 
 Diese kleine Erweiterung ohne Build-Schritt fügt links neben dem Titel Links zu **IRC**, **Mumble** und
 **Mastodon** ein. Nur das Symbol ist sichtbar, der Text klappt bei Hover und Tastaturfokus aus (auf
 Touch-Geräten und im Handy-Menü steht er immer daneben). Das Aussehen steht im Theme
 (`theme/custom.less`, Klasse `.FreeSpawnLink`), die Links selbst in `freespawn-links/forum.js`.
+
+Zusätzlich hängt `extend.php` über `Extend\Frontend::content()` die Favicon-/Touch-Icon-/Vorschaubild-Tags
+in den echten `<head>` (siehe `brand/README.md`). **Nicht** über Flarums Setting `custom_header` machen:
+das ist laut Flarum-Doku für sichtbaren Inhalt "am Seitenanfang" gedacht und landet im `<body>`. Browser
+übernehmen ein `<link rel="icon">` dort trotzdem für den Tab, aber iOS' "Zum Home-Bildschirm" liest
+`apple-touch-icon` nur aus `<head>` — genau das war der Bug, den dieser Ansatz behebt.
 
 | Link | Ziel |
 |---|---|

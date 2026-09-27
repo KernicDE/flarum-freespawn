@@ -228,6 +228,12 @@ input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
   height: 34px;
   margin-right: 12px;
   background: url(/brand/mark-header.svg?v=1) center / contain no-repeat;
+  // Punkt/Dreieck sind bewusst ein helles Pfirsich (#ffe2c6, siehe brand/build.py), nicht
+  // reines Weiss wie der Ring - auf dem hellen Ende des Header-Verlaufs (#c24a00) sinkt der
+  // Kontrast dadurch auf ~4:1 und das Zeichen "verschwimmt" mit dem Hintergrund. Ein dunkler
+  // Schlagschatten (wie schon bei .Badge--icon) gibt dem ganzen Zeichen eine Kontur, die auf
+  // jedem Orangeton haelt, ohne die SVG-Datei selbst anfassen zu muessen.
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
 }
 
 // Links zu IRC, Mumble und Mastodon links in der Kopfleiste (per local/freespawn-links eingehängt).

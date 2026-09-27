@@ -10,9 +10,12 @@ bzw. `#15151d` (heller Grund), Schrift Chakra Petch (Free 500, Spawn 700).
   `apple-touch-icon.png`, `icon-192|512.png`, `profile-1024.png` (Profilbild, quadratisch), `social-preview.svg/.png` (1200x630).
 - Favicon hat einen dickeren Ring und etwas kleineren Punkt/Dreieck, damit bei 16 px alles getrennt bleibt.
 - `panels.py` erzeugt die Twitch-Panel-Bilder (320 px breit: Forum, IRC, Mumble, Mastodon) nach `dist/twitch-panels/`.
-- Einspielen ins Forum: `scripts/deploy-brand.sh` (Dateien nach `public/brand/`, Setting `custom_header` aus `custom_header.html`,
-  Sicherung + Rollback), danach `scripts/deploy-theme.sh` fuer das Zeichen in der Kopfleiste (`#home-link::before`).
-  Bei Aenderungen an den Dateien die `?v=1`-Version in `custom_header.html` und `theme/custom.less` hochzaehlen (nginx cached 1 Jahr).
+- Einspielen ins Forum: `scripts/deploy-brand.sh` (Dateien nach `public/brand/`, Pruefung inkl. `<head>`),
+  danach `scripts/deploy-theme.sh` fuer das Zeichen in der Kopfleiste (`#home-link::before`).
+  Die Favicon/Touch-Icon/Vorschaubild-Tags selbst kommen aus `local/extend.php` (nicht mehr aus Flarums
+  Setting `custom_header` - das landet im `<body>`, iOS' "Zum Home-Bildschirm" liest apple-touch-icon aber
+  nur aus `<head>`, siehe `local/README.md`). Bei Aenderungen an den Dateien die `?v=1`-Version in
+  `local/extend.php` UND `theme/custom.less` hochzaehlen (nginx cached 1 Jahr).
 - Mastodon (`../mastodon-freespawn/theme/`): `freespawn-icon.png` = `profile-1024.png`, `freespawn-thumbnail.png` = `social-preview.png`,
   hochgeladen als `SiteUpload` (favicon, app_icon, thumbnail); das Zeichen im CSS ist als data-URI eingebettet (dunkel und hell).
 - Entwurfsphase (Varianten, Generator): `~/Development/freespawn/logo-konzepte/`.
