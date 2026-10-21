@@ -1,4 +1,4 @@
-FROM php:8.3-fpm-alpine
+FROM php:8.5-fpm-alpine
 
 # System-Abhängigkeiten für PHP-Extensions und Composer
 RUN apk add --no-cache \
@@ -21,11 +21,10 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
         gd \
         intl \
         pdo_mysql \
-        mbstring \
-        zip \
-        curl \
-        dom \
-        opcache
+        zip
+
+# Flarum 1.x (Illuminate 8) erzeugt unter PHP 8.4+ Deprecations; nie in Antworten ausgeben
+RUN printf 'display_errors=Off\nlog_errors=On\nerror_reporting=E_ALL & ~E_DEPRECATED & ~E_STRICT\n' > /usr/local/etc/php/conf.d/zz-prod.ini
 
 # Composer aus offiziellem Image übernehmen
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
