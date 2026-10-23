@@ -24,10 +24,11 @@ scripts/deploy-local-extension.sh
 ```
 
 Das Skript prüft die PHP-Syntax, sichert die aktuelle `extend.php`, schreibt `extend.php` und
-`freespawn-links/` nach `data/flarum/`, leert den Cache und prüft anschließend die Seite. Es startet dazu einen
-Browser (Headless-Brave hängt derzeit auf dem Entwicklungsrechner, dann schlägt die Prüfung fehl) und verlangt, dass die Seite **im ausgeführten DOM** wirklich rendert (3 Links, Suchfeld). Bei einem
-Fehler wird automatisch auf die alte `extend.php` zurückgerollt. Ohne Brave im `PATH` gibt es nur eine Warnung
-(Profil per `BRAVE_PROFILE` einstellbar).
+`freespawn-links/` nach `data/flarum/`, leert den Cache und prüft anschließend die Seite. Danach prüft es die Seite im ausgeführten DOM (jsdom, `scripts/check-render.js`, einmalig `npm install` in `scripts/`): 3 Links, Suchfeld und keine JS-Fehler. Bei einem
+Fehler wird automatisch auf die alte `extend.php` zurückgerollt. Ohne `npm install` gibt es nur eine Warnung.
+
+Neben den 3 Links hängt `forum.js` einen **Deck**-Link ins Benutzermenü und als Symbol oben rechts (nur für
+eingeloggte Nutzer mit der Berechtigung `canUseDeck`).
 
 ## Stolpersteine (alle beim Bau gefunden)
 

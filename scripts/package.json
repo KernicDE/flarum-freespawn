@@ -1,0 +1,6 @@
+{
+  "name": "freespawn-scripts",
+  "private": true,
+  "description": "Hilfsprogramme fuer die Deploy-Skripte",
+  "dependencies": { "jsdom": "^25.0.1" }
+}

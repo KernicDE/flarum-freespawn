@@ -25,22 +25,16 @@ put() {  # $1 = lokale Datei, $2 = Zielpfad im Container (als www-data)
 clear_cache() {
   ssh "$HOST" "docker exec -u www-data -w /var/www/html $APP php flarum cache:clear && docker exec $APP kill -USR2 1 && docker restart flarum-worker-freespawn" >/dev/null
 }
-# Laufzeit-Pruefung im echten Browser (JS wird ausgefuehrt). Ein Fehler im Forum-JS liefert weiter HTTP 200,
-# die Seite ist dann aber leer - genau das faengt nur diese Pruefung ab.
-# Rueckgabe: 0 = rendert (3 Links + Suchfeld), 1 = kaputt, 2 = nicht pruefbar
+# Laufzeit-Pruefung im ausgefuehrten DOM (jsdom, scripts/check-render.js). Ein Fehler im Forum-JS liefert weiter
+# HTTP 200, die Seite ist dann aber leer - genau das faengt nur diese Pruefung ab.
+# Rueckgabe: 0 = rendert (3 Links, Suchfeld, keine JS-Fehler), 1 = kaputt, 2 = nicht pruefbar (npm install fehlt)
 rendered_ok() {
-  command -v brave >/dev/null 2>&1 || return 2
-  local dom
-  # Desktop-Breite noetig: unter 992px zeigt Flarum das Suchfeld nur als Lupe (kein .Search-input).
-  # Browser-Konsole wird mitgeschrieben (BROWSER_LOG), damit ein Fehlschlag diagnostizierbar ist.
-  dom="$(timeout 150 brave --headless=new --disable-gpu --no-sandbox \
-        --user-data-dir="${BRAVE_PROFILE:-$HOME/.cache/freespawn-deploy-browser}" \
-        --window-size=1400,700 --virtual-time-budget=12000 --enable-logging=stderr --v=0 --dump-dom "$SITE/" 2>"$BROWSER_LOG" || true)"
-  [ -n "$dom" ] || return 2
-  # Here-Strings statt "printf | grep -q": unter pipefail meldet die Pipeline sonst einen Fehler (SIGPIPE), wenn
-  # grep -q beim ersten Treffer aussteigt, obwohl gefunden wurde.
-  local links; links="$(grep -o 'class="FreeSpawnLink"' <<<"$dom" | wc -l)"
-  [ "$links" = 3 ] && grep -q 'class="Search-input"' <<<"$dom"
+  [ -d "$HERE/scripts/node_modules/jsdom" ] || return 2
+  local out rc=0
+  out="$(timeout 60 node "$HERE/scripts/check-render.js" "$SITE/" 2>&1)" || rc=$?
+  echo "$out" > "$BROWSER_LOG"
+  [ "$rc" = 0 ] && return 0
+  return 1
 }
 healthy() {
   local code js rc=0
@@ -52,10 +46,9 @@ healthy() {
   grep -q "freespawn-links" <<<"$bundle" || { echo "  forum.js enthaelt die Erweiterung nicht"; return 1; }
   rendered_ok || rc=$?
   case "$rc" in
-    0) echo "  Browser-Pruefung: Seite rendert (3 Links, Suchfeld)";;
-    2) echo "  WARNUNG: Browser-Pruefung nicht moeglich (kein Brave / leere Ausgabe) - bitte im Browser ansehen";;
-    *) echo "  Browser-Pruefung FEHLGESCHLAGEN: Seite rendert nicht (Konsole: $BROWSER_LOG)"
-       grep -i -E "Uncaught|TypeError|ReferenceError|SyntaxError" "$BROWSER_LOG" | grep -v -i "extension-purpose" | cut -c1-300 | head -5 | sed 's/^/    /'
+    0) echo "  Render-Pruefung: Seite rendert (3 Links, Suchfeld, keine JS-Fehler)";;
+    2) echo "  WARNUNG: Render-Pruefung nicht moeglich (in scripts/ "npm install" ausfuehren) - bitte im Browser ansehen";;
+    *) echo "  Render-Pruefung FEHLGESCHLAGEN (Ausgabe: $BROWSER_LOG)"; sed 's/^/    /' "$BROWSER_LOG" | head -5
        return 1;;
   esac
 }

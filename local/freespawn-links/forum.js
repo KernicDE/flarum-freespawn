@@ -17,6 +17,9 @@
     var extendModule = reg.get('core', 'common/extend');
     var HeaderPrimary = reg.get('core', 'forum/components/HeaderPrimary');
     var Icon = reg.get('core', 'common/components/Icon');
+    var HeaderSecondary = reg.get('core', 'forum/components/HeaderSecondary');
+    var SessionDropdown = reg.get('core', 'forum/components/SessionDropdown');
+    var LinkButton = reg.get('core', 'common/components/LinkButton');
     if (!extendModule || !HeaderPrimary || !Icon) return;
 
     var LINKS = [
@@ -31,7 +34,27 @@
         href: 'https://social.freespawn.de', external: true, rel: 'me' }
     ];
 
+    // Deck (flarum/deck): Link im Benutzermenue und als Symbol oben rechts, nur mit Berechtigung.
+    function canUseDeck() {
+      return !!(window.app.session.user && window.app.forum.attribute('canUseDeck'));
+    }
+
     window.app.initializers.add('freespawn-links', function () {
+      if (SessionDropdown && LinkButton) {
+        extendModule.extend(SessionDropdown.prototype, 'items', function (items) {
+          if (!canUseDeck()) return;
+          items.add('freespawnDeck', window.m(LinkButton, { icon: 'fas fa-table-columns', href: window.app.route('deck') }, 'Deck'), 60);
+        });
+      }
+      if (HeaderSecondary && LinkButton) {
+        extendModule.extend(HeaderSecondary.prototype, 'items', function (items) {
+          if (!canUseDeck()) return;
+          items.add('freespawnDeck', window.m(LinkButton, {
+            className: 'Button Button--link FreeSpawnDeckLink', icon: 'fas fa-table-columns',
+            href: window.app.route('deck'), title: 'Deck', 'aria-label': 'Deck'
+          }), 20);
+        });
+      }
       extendModule.extend(HeaderPrimary.prototype, 'items', function (items) {
         LINKS.forEach(function (l) {
           var attrs = { href: l.href, title: l.title, 'aria-label': l.title };
