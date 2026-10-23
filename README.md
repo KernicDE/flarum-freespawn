@@ -29,6 +29,7 @@ Flarum selbst (`vendor/`, `composer.json`, `config.php`) liegt auf dem Server im
 - **OPcache** läuft mit `validate_timestamps=0`: nach jedem Composer-Lauf oder Datei-Deploy PHP-FPM neu laden (`docker exec flarum-app-freespawn kill -USR2 1`) und den Worker neu starten (`docker restart flarum-worker-freespawn`). Die Deploy-Skripte tun das.
 - **Redis** hält Cache, Sessions, Settings und Queue (`fof/redis`, Konfiguration in `local/extend.php`, Passwort `REDIS_PASSWORD` aus `.env`). Ohne Redis antwortet das Forum mit 500.
 - **Settings und Cache:** Flarum 2 cached Settings in Redis. Nach direkten SQL-Änderungen `php flarum cache:clear` **zweimal** ausführen.
+- **hCaptcha-Patch:** `ralkage/flarum-hcaptcha` 2.0.0-beta.8 deklariert `$rules` ohne Typ, Flarum 2 verlangt `array` (PHP-Fatal beim Erstellen von Diskussionen, Antworten und Registrierungen). Die `composer.json` auf dem Server enthält dafür einen idempotenten `post-autoload-dump`-Schritt (`sed` auf `HCaptchaValidator.php`), der Composer-Updates übersteht. Entfällt, sobald das Paket gefixt ist.
 - **Scheduler und Worker** laufen als eigene Container (`scheduler`, `worker`, gleiches Image).
 - **Backup vor größeren Änderungen:** `mariadb-dump --single-transaction --routines --events --all-databases` und ein Tarball von `data/db` und `data/flarum` (Verzeichnis `backup/`, nicht im Repo).
 - Rollback auf das Flarum-1.x-Image: Tag `ghcr.io/kernicde/freespawn-flarum:rollback-pre-flarum2-20261023-123123` (nur lokal auf dem Server vorhanden) sowie der Restore aus dem Backup.
