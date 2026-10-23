@@ -511,6 +511,28 @@ body:has(.Header-secondary .item-session) .WelcomeHero {
   background: @accent-soft;
   box-shadow: inset 3px 0 0 @accent;
 }
+// Waagerechte Navigation (Deck-, Themen- und Nachrichten-Seite, Tablet/Handy): Der Kern legt die Eintraege
+// mit gap statt Icon-Einzug nebeneinander. Die Einzug-, Pillen- und Leisten-Regeln oben gelten nur senkrecht,
+// hier bekommen die Eintraege einen schlichten Chip, der aktive Eintrag eine Unterstreichung in Akzentfarbe.
+.Page--vertical .sideNav .Dropdown--select .Dropdown-menu > li,
+.sideNav--horizontal .Dropdown--select .Dropdown-menu > li {
+  margin-right: 4px;
+}
+.Page--vertical .sideNav .Dropdown--select .Dropdown-menu > li > a,
+.sideNav--horizontal .Dropdown--select .Dropdown-menu > li > a {
+  padding: 0.375rem 0.75rem;
+  gap: 8px;
+}
+.Page--vertical .sideNav .Dropdown--select .Dropdown-menu > li > a .Button-icon,
+.sideNav--horizontal .Dropdown--select .Dropdown-menu > li > a .Button-icon {
+  margin-left: 0;
+}
+.Page--vertical .sideNav .Dropdown--select .Dropdown-menu > li.active > a,
+.sideNav--horizontal .Dropdown--select .Dropdown-menu > li.active > a {
+  background: @accent-soft;
+  box-shadow: inset 0 -2px 0 @accent;
+}
+
 // Senkrechte Sidebar (ab 992px): als Karte wie Diskussionsliste und Beiträge, statt einer
 // nackten Liste, deren Einträge ohne Abstand bis an den Rand laufen. Innenabstand, Lücken
 // zwischen den Einträgen, gerundeter Rand. Darunter (Tablet/Handy) zeigt Flarum die Navigation
