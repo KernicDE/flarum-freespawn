@@ -23,8 +23,14 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
         pdo_mysql \
         zip
 
-# Flarum 1.x (Illuminate 8) erzeugt unter PHP 8.4+ Deprecations; nie in Antworten ausgeben
-RUN printf 'display_errors=Off\nlog_errors=On\nerror_reporting=E_ALL & ~E_DEPRECATED & ~E_STRICT\n' > /usr/local/etc/php/conf.d/zz-prod.ini
+# phpredis (fof/redis nutzt die Extension automatisch, sonst Predis)
+RUN pecl install redis \
+    && docker-php-ext-enable redis
+
+# Produktiv-Einstellungen: Fehler ins Log, nie in Antworten; OPcache gross genug fuer Flarum 2.
+# validate_timestamps=0: nach jedem Composer-/extend.php-Deploy php-fpm neu laden (reload-fpm.sh)
+COPY php-prod.ini /usr/local/etc/php/conf.d/zz-prod.ini
+COPY fpm-pool.conf /usr/local/etc/php-fpm.d/zz-pool.conf
 
 # Composer aus offiziellem Image übernehmen
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer

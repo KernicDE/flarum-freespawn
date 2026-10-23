@@ -22,7 +22,26 @@ services:
       retries: 5
       start_period: 30s
 
+  redis:
+    image: redis:8-alpine
+    container_name: flarum-redis-freespawn
+    restart: unless-stopped
+    env_file:
+      - .env
+    # volatile-lru: raeumt nur Schluessel mit Ablaufzeit (Cache, Sessions) auf, Queue-Jobs bleiben erhalten
+    command: ["sh", "-c", "exec redis-server --requirepass \"$$REDIS_PASSWORD\" --maxmemory 256mb --maxmemory-policy volatile-lru --appendonly yes --appendfsync everysec"]
+    volumes:
+      - redis-data:/data
+    networks:
+      - default
+    healthcheck:
+      test: ["CMD-SHELL", "REDISCLI_AUTH=\"$$REDIS_PASSWORD\" redis-cli ping | grep -q PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   flarum:
+    # Image kommt aus GHCR (Build per GitHub Actions bei Push auf main, siehe README)
     image: ghcr.io/kernicde/freespawn-flarum:latest
     container_name: flarum-app-freespawn
     restart: unless-stopped
@@ -36,6 +55,42 @@ services:
     depends_on:
       mariadb:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # Scheduler (Queue-Housekeeping, GDPR, Umfragen) jede Minute
+  scheduler:
+    image: ghcr.io/kernicde/freespawn-flarum:latest
+    container_name: flarum-scheduler-freespawn
+    restart: unless-stopped
+    user: www-data
+    env_file:
+      - .env
+    command: ["sh", "-c", "while true; do php flarum schedule:run; sleep 60; done"]
+    volumes:
+      - ./data/flarum:/var/www/html
+    networks:
+      - default
+    depends_on:
+      flarum:
+        condition: service_started
+
+  # Queue-Worker (Redis). --max-time: beendet sich stuendlich und startet frisch (neuer Code nach Deploys)
+  worker:
+    image: ghcr.io/kernicde/freespawn-flarum:latest
+    container_name: flarum-worker-freespawn
+    restart: unless-stopped
+    user: www-data
+    env_file:
+      - .env
+    command: ["php", "flarum", "queue:work", "--queue=notifications,default,exports", "--max-time=3600", "--sleep=3"]
+    volumes:
+      - ./data/flarum:/var/www/html
+    networks:
+      - default
+    depends_on:
+      flarum:
+        condition: service_started
 
   nginx:
     image: nginx:alpine
@@ -74,20 +129,6 @@ services:
       - "traefik.http.routers.freespawn-http.entrypoints=web"
       - "traefik.http.routers.freespawn-http.middlewares=freespawn-https"
       - "traefik.http.middlewares.freespawn-https.redirectscheme.scheme=https"
-      # Alte Domain dlivr.it (und www) -> freespawn.de, dauerhaft, Pfad bleibt erhalten
-      # (alte Links in IRC, Forum und Suchmaschinen funktionieren weiter)
-      - "traefik.http.routers.freespawn-legacy.rule=Host(`dlivr.it`) || Host(`www.dlivr.it`)"
-      - "traefik.http.routers.freespawn-legacy.entrypoints=websecure"
-      - "traefik.http.routers.freespawn-legacy.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.freespawn-legacy.middlewares=freespawn-legacy-redirect"
-      - "traefik.http.routers.freespawn-legacy.service=freespawn-flarum"
-      - "traefik.http.routers.freespawn-legacy-http.rule=Host(`dlivr.it`) || Host(`www.dlivr.it`)"
-      - "traefik.http.routers.freespawn-legacy-http.entrypoints=web"
-      - "traefik.http.routers.freespawn-legacy-http.middlewares=freespawn-legacy-redirect"
-      - "traefik.http.routers.freespawn-legacy-http.service=freespawn-flarum"
-      - "traefik.http.middlewares.freespawn-legacy-redirect.redirectregex.regex=^https?://(?:www\\.)?dlivr\\.it(.*)"
-      - "traefik.http.middlewares.freespawn-legacy-redirect.redirectregex.replacement=https://freespawn.de$${1}"
-      - "traefik.http.middlewares.freespawn-legacy-redirect.redirectregex.permanent=true"
 
 networks:
   default:
@@ -96,3 +137,7 @@ networks:
     external: true
   freespawn-net:
     external: true
+
+volumes:
+  redis-data:
+    name: flarum-redis-freespawn-data
