@@ -45,44 +45,78 @@
 }
 
 // ---------- Palette ----------
-@bg:            #0c0c11;   // Seitenhintergrund
-@surface-1:     #15151d;   // Karten
-@surface-2:     #1d1d28;   // Controls, Hover
-@surface-3:     #262633;   // Popups, Modals
-@border:        #2c2c3a;   // dekorative Trennlinien
-@border-strong: #6e6e88;   // Input-Ränder (>= 3:1)
+// Die Farben stehen als CSS-Variablen (--fs-*) je Farbschema weiter unten: Dunkel ist der Standard,
+// html:root[data-theme^=light] ueberschreibt sie fuer Hell. Flarum setzt data-theme zur Laufzeit auf
+// light, dark, light-hc oder dark-hc. Die LESS-Variablen verweisen nur darauf (keine Farbfunktionen darauf).
+@bg:            var(--fs-bg);            // Seitenhintergrund
+@surface-1:     var(--fs-surface-1);     // Karten
+@surface-2:     var(--fs-surface-2);     // Controls, Hover
+@surface-3:     var(--fs-surface-3);     // Popups, Modals
+@border:        var(--fs-border);        // dekorative Trennlinien
+@border-strong: var(--fs-border-strong); // Input-Raender (>= 3:1)
 
-@text:          #f4f4f8;
-@text-muted:    #b9b9c9;
-@text-faint:    #9a9ab0;
+@text:          var(--fs-text);
+@text-muted:    var(--fs-text-muted);
+@text-faint:    var(--fs-text-faint);
 
-@accent:        #ff6d00;
-@accent-hover:  #ff8a33;
-@accent-active: #e05f00;
-@accent-soft:   rgba(255, 109, 0, 0.14);
-@accent-glow:   rgba(255, 109, 0, 0.35);
+@accent:        var(--fs-accent);
+@accent-hover:  var(--fs-accent-hover);
+@accent-active: var(--fs-accent-active);
+@accent-soft:   var(--fs-accent-soft);
+@accent-glow:   var(--fs-accent-glow);
 
 @font-body:    'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 @font-display: 'Chakra Petch', 'Inter', system-ui, sans-serif;
 
-// ---------- Flarum-Variablen ----------
-// html:root (Spezifität 0,1,1) schlägt spätere :root-Blöcke aus
-// Extensions (z. B. --tag-bg von flarum/tags).
+// ---------- Farbschemata ----------
+// Hoehere Spezifitaet als der Kern ([data-theme^=dark] 0,1,0) und als Erweiterungs-:root-Bloecke.
 html:root {
-  --primary-color: @accent;
+  --fs-bg: #0c0c11;
+  --fs-surface-1: #15151d;
+  --fs-surface-2: #1d1d28;
+  --fs-surface-3: #262633;
+  --fs-border: #2c2c3a;
+  --fs-border-strong: #6e6e88;
+  --fs-text: #f4f4f8;
+  --fs-text-muted: #b9b9c9;
+  --fs-text-faint: #9a9ab0;
+  --fs-accent: #ff6d00;
+  --fs-accent-hover: #ff8a33;
+  --fs-accent-active: #e05f00;
+  --fs-accent-soft: rgba(255, 109, 0, 0.14);
+  --fs-accent-glow: rgba(255, 109, 0, 0.35);
+  --fs-hover: #1b1b26;
+  --fs-active: #1d1b27;
+  --fs-hero-top: #1b1622;
+  --fs-scroll: #3a3a4a;
+}
+html:root[data-theme^=light] {
+  --fs-bg: #f4f4f8;
+  --fs-surface-1: #ffffff;
+  --fs-surface-2: #ececf3;
+  --fs-surface-3: #e1e1ea;
+  --fs-border: #d5d5e0;
+  --fs-border-strong: #767690;
+  --fs-text: #14141c;
+  --fs-text-muted: #4b4b5f;
+  --fs-text-faint: #62627a;
+  --fs-accent: #b84400;          // Weiß darauf >= 5:1, Text auf #f4f4f8 >= 4,9:1
+  --fs-accent-hover: #993a00;
+  --fs-accent-active: #7f3000;
+  --fs-accent-soft: rgba(184, 68, 0, 0.10);
+  --fs-accent-glow: rgba(184, 68, 0, 0.25);
+  --fs-hover: #f0f0f6;
+  --fs-active: #fdeee3;
+  --fs-hero-top: #ffe9d9;
+  --fs-scroll: #b9b9c9;
+}
+
+// ---------- Flarum-Variablen je Schema (Literale) ----------
+html:root[data-theme^=dark] {
   --secondary-color: #5c2700;
-
-  --body-bg: @bg;
   --body-bg-shaded: #08080b;
-  --body-bg-light: @surface-1;
   --body-bg-faded: rgba(12, 12, 17, 0.93);
-
-  --text-color: @text;
-  --heading-color: @text;
-  --link-color: @accent;
-  --muted-color: @text-muted;
   --muted-color-light: #c9c9d8;
-  --muted-more-color: @text-faint;
   --muted-more-bg: rgba(154, 154, 176, 0.18);
   --muted-more-bg-hover: rgba(154, 154, 176, 0.26);
   --muted-more-bg-active: rgba(154, 154, 176, 0.34);
@@ -91,23 +125,77 @@ html:root {
   --error-color: #ff7b7b;
   --validation-error-color: #ff7b7b;
   --overlay-bg: rgba(8, 8, 12, 0.88);
-
-  --control-bg: @surface-2;
-  --control-bg-light: @surface-3;
   --control-bg-shaded: #14141c;
-  --control-color: @text;
   --control-danger-color: #ffb3b3;
   --control-danger-bg: #3a1519;
   --control-danger-bg-hover: #4a1a20;
   --control-danger-bg-active: #5a2028;
   --control-danger-bg-disabled: #3a1519;
+  --button-bg-active: #30303f;
+  --button-primary-color: #14100c;
+  --discussion-title-color: #c9c9d8;
+  --code-bg: #101017;
+  --sidenav-color-hover: #ffffff;
+  // Kern-Werte des dunklen Schemas sind braun getoent (Farbton 25): neutral ueberschreiben.
+  --control-body-bg-mix: #15151d;
+  --control-muted-color: #4a4a5e;
+  --button-toggled-color: #15151d;
+  --button-toggled-bg: #8a8aa3;
+  --button-toggled-bg-hover: #7d7d96;
+  --button-toggled-bg-active: #70708a;
+  --button-toggled-bg-disabled: #8a8aa3;
+  --flagged-post-color: #15151d;
+}
+html:root[data-theme^=light] {
+  --secondary-color: #fbe3d0;
+  --body-bg-shaded: #e9e9f0;
+  --body-bg-faded: rgba(244, 244, 248, 0.93);
+  --muted-color-light: #5d5d72;
+  --muted-more-bg: rgba(98, 98, 122, 0.14);
+  --muted-more-bg-hover: rgba(98, 98, 122, 0.22);
+  --muted-more-bg-active: rgba(98, 98, 122, 0.30);
+  --muted-more-bg-disabled: rgba(98, 98, 122, 0.14);
+  --shadow-color: rgba(20, 20, 30, 0.18);
+  --error-color: #c0262d;
+  --validation-error-color: #c0262d;
+  --overlay-bg: rgba(20, 20, 30, 0.55);
+  --control-bg-shaded: #dcdce6;
+  --control-danger-color: #9b1c22;
+  --control-danger-bg: #fbe3e4;
+  --control-danger-bg-hover: #f6cfd1;
+  --control-danger-bg-active: #f0babd;
+  --control-danger-bg-disabled: #fbe3e4;
+  --button-bg-active: #d6d6e2;
+  --button-primary-color: #ffffff;
+  --discussion-title-color: #22222e;
+  --code-bg: #ececf3;
+  --sidenav-color-hover: #14141c;
+  --control-body-bg-mix: #f4f4f8;
+}
+
+// ---------- Flarum-Variablen ----------
+// html:root (Spezifität 0,1,1) schlägt spätere :root-Blöcke aus
+// Extensions (z. B. --tag-bg von flarum/tags).
+html:root {
+  --primary-color: @accent;
+
+  --body-bg: @bg;
+  --body-bg-light: @surface-1;
+
+  --text-color: @text;
+  --heading-color: @text;
+  --link-color: @accent;
+  --muted-color: @text-muted;
+  --muted-more-color: @text-faint;
+
+  --control-bg: @surface-2;
+  --control-bg-light: @surface-3;
+  --control-color: @text;
 
   --button-color: @text;
   --button-bg: @surface-2;
   --button-bg-hover: @surface-3;
-  --button-bg-active: #30303f;
   --button-bg-disabled: @surface-2;
-  --button-primary-color: #14100c;
   --button-primary-bg: @accent;
   --button-primary-bg-hover: @accent-hover;
   --button-primary-bg-active: @accent-active;
@@ -121,16 +209,13 @@ html:root {
   --hero-bg: @surface-1;
   --hero-color: @text-muted;
 
-  --discussion-title-color: #c9c9d8;
-  --discussion-list-item-bg-hover: #1b1b26;
+  --discussion-list-item-bg-hover: var(--fs-hover);
   --usercard-bg: @surface-1;
   --avatar-bg: @surface-3;
-  --code-bg: #101017;
   --code-color: @text;
   --tag-bg: @surface-2;
   --tag-color: @text-muted;
   --sidenav-color: @text-muted;
-  --sidenav-color-hover: #ffffff;
   --sidenav-color-active: @accent;
 
   // Header: Verlauf bleibt orange, Vordergrund ist durchgehend weiß.
@@ -362,7 +447,7 @@ input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
   position: relative;
   background:
     radial-gradient(760px 240px at 12% -30%, rgba(255, 109, 0, 0.34), transparent 65%),
-    linear-gradient(180deg, #1b1622 0%, @surface-1 100%);
+    linear-gradient(180deg, var(--fs-hero-top) 0%, @surface-1 100%);
   border-bottom: 1px solid @border;
 }
 .WelcomeHero::after {
@@ -391,13 +476,13 @@ input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
   letter-spacing: 0.04em;
   line-height: 1.2;
   text-transform: uppercase;
-  color: #ffffff;
+  color: @text;
 }
 .WelcomeHero .Hero-subtitle {
   margin-top: 0.75rem;
   font-size: 1.0625rem;
   line-height: 1.65;
-  color: #d3d3e0;
+  color: @text-muted;
 }
 // Eingeloggt (Flarum rendert dann `.item-session` im Header): Willkommensbanner ausblenden.
 // Gäste sehen ihn weiter (und können ihn per Schließen-Button selbst wegklicken).
@@ -594,13 +679,13 @@ body:has(.Header-secondary .item-session) .WelcomeHero {
   transition: background-color .15s ease, border-color .15s ease, box-shadow .2s ease, transform .2s ease;
 }
 .DiscussionListItem:hover {
-  background: #1b1b26;
+  background: var(--fs-hover);
   border-color: rgba(255, 109, 0, 0.6);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 109, 0, 0.22);
   transform: translateY(-1px);
 }
 .DiscussionListItem.active {
-  background: #1f1a24;
+  background: var(--fs-active);
   border-color: @accent;
 }
 // Das Thread-Menü (Folgen, Umbenennen, ...) ragt aus der Karte heraus. Die
@@ -860,7 +945,7 @@ textarea.FormControl {
 }
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: @bg; }
-::-webkit-scrollbar-thumb { background: #3a3a4a; border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: var(--fs-scroll); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: @accent; }
 ::selection { background: @accent-glow; }
 

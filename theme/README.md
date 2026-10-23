@@ -110,3 +110,14 @@ Flarum 2 setzt die Header-Farben je Farbschema unter `[data-colored-header=true]
 (Spezifität 0,2,0). Das schlägt `html:root`. Deshalb steht in `custom.less` ein Block
 `html[data-colored-header=true][data-theme^=…]` (0,2,1), der Weiß für alle Schemata erzwingt. Neue
 Palette-Variablen, die Flarum je Schema überschreibt, brauchen die gleiche Behandlung.
+
+## Farbschemata (Hell und Dunkel)
+Flarum 2 setzt `data-theme` auf `<html>` zur Laufzeit auf `light`, `dark`, `light-hc` oder `dark-hc`. Die Palette steht
+als CSS-Variablen `--fs-*` in `custom.less`: `html:root` ist Dunkel (neutral near-black, kein Braunstich),
+`html:root[data-theme^=light]` überschreibt sie für Hell (Akzent dort `#b84400`, Link-Kontrast >= 5:1). Die
+LESS-Variablen (`@bg`, `@surface-1`, `@accent` …) verweisen nur auf diese CSS-Variablen. Feste Hex-Farben in
+Regeln gehören nicht ins Theme, außer sie gelten für beide Schemata (Header-Verlauf, Tag-Farben, Schatten).
+Schema-abhängige Flarum-Variablen mit Literalen stehen in den Blöcken `html:root[data-theme^=dark]` und
+`html:root[data-theme^=light]`. Prüfung ohne Browser: kompiliertes `forum.css` auswerten (Kaskade pro Schema),
+siehe Commit-Beschreibung; ein Blick in beide Schemata im Browser bleibt Pflicht.
+
