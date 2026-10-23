@@ -148,6 +148,19 @@ html:root {
   --border-radius: 8px;
 }
 
+// Flarum 2 setzt die Header-Farben je Schema unter [data-colored-header=true][data-theme^=...]
+// (Spezifitaet 0,2,0) - das schlaegt das html:root oben und faerbt Suche, Icons und Namen dunkelbraun
+// auf dem orangen Balken. Gleiche Werte mit hoeherer Spezifitaet (0,2,1) erzwingen Weiss in allen Schemata.
+html[data-colored-header=true][data-theme^=light],
+html[data-colored-header=true][data-theme^=dark],
+html[data-colored-header=true][data-theme=light-hc],
+html[data-colored-header=true][data-theme=dark-hc] {
+  --header-color: #ffffff;
+  --header-control-color: #ffffff;
+  --header-colored-color: #ffffff;
+  --header-colored-control-color: #ffffff;
+}
+
 // ---------- Basis ----------
 html {
   font-size: 100%;   // = Browser-Einstellung, Basis für rem

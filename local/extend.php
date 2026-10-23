@@ -10,6 +10,15 @@ use Flarum\Extend;
 use Flarum\Frontend\Document;
 
 return [
+    // Redis fuer Cache, Sessions, Settings und Queue (fof/redis). Passwort aus der Container-Umgebung (.env).
+    new FoF\Redis\Extend\Redis([
+        'host' => 'redis',
+        'port' => 6379,
+        'password' => getenv('REDIS_PASSWORD') ?: null,
+        'database' => 1,
+        'persistent' => true,
+    ]),
+
     // Links zu IRC, Mumble und Mastodon in der Kopfleiste (Stil: theme/custom.less)
     // + Favicon/Touch-Icon/Vorschaubild-Tags im echten <head>.
     //

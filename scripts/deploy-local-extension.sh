@@ -21,7 +21,10 @@ mkdir -p "$BACKUPS"
 put() {  # $1 = lokale Datei, $2 = Zielpfad im Container (als www-data)
   ssh "$HOST" "docker exec -u www-data -i $APP sh -c 'cat > $2'" < "$1"
 }
-clear_cache() { ssh "$HOST" "docker exec -u www-data -w /var/www/html $APP php flarum cache:clear" >/dev/null; }
+# OPcache laeuft mit validate_timestamps=0: ohne Reload (USR2 an php-fpm, PID 1) bliebe der alte Code aktiv.
+clear_cache() {
+  ssh "$HOST" "docker exec -u www-data -w /var/www/html $APP php flarum cache:clear && docker exec $APP kill -USR2 1 && docker restart flarum-worker-freespawn" >/dev/null
+}
 # Laufzeit-Pruefung im echten Browser (JS wird ausgefuehrt). Ein Fehler im Forum-JS liefert weiter HTTP 200,
 # die Seite ist dann aber leer - genau das faengt nur diese Pruefung ab.
 # Rueckgabe: 0 = rendert (3 Links + Suchfeld), 1 = kaputt, 2 = nicht pruefbar

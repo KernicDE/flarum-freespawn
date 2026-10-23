@@ -25,7 +25,7 @@ scripts/deploy-local-extension.sh
 
 Das Skript prüft die PHP-Syntax, sichert die aktuelle `extend.php`, schreibt `extend.php` und
 `freespawn-links/` nach `data/flarum/`, leert den Cache und prüft anschließend die Seite. Es startet dazu einen
-Browser und verlangt, dass die Seite **im ausgeführten DOM** wirklich rendert (3 Links, Suchfeld). Bei einem
+Browser (Headless-Brave hängt derzeit auf dem Entwicklungsrechner, dann schlägt die Prüfung fehl) und verlangt, dass die Seite **im ausgeführten DOM** wirklich rendert (3 Links, Suchfeld). Bei einem
 Fehler wird automatisch auf die alte `extend.php` zurückgerollt. Ohne Brave im `PATH` gibt es nur eine Warnung
 (Profil per `BRAVE_PROFILE` einstellbar).
 
@@ -35,8 +35,11 @@ Fehler wird automatisch auf die alte `extend.php` zurückgerollt. Ohne Brave im 
   `flarum.extensions['site-custom']=module.exports` an und liest beim Start daraus. Fehlt der Export
   (`module.exports = {}` am Dateiende), bricht die gesamte Forum-App mit
   `Cannot read properties of undefined (reading 'extend')` ab. HTTP bleibt dabei 200, die Seite ist aber leer.
-- Die Module heißen im Forum-Bundle ohne Präfix: `compat['extend']`, `compat['components/HeaderPrimary']`,
-  `compat['helpers/icon']`.
+- **Flarum 2:** Das alte `flarum.core.compat` gibt es nicht mehr. Die Module kommen aus der Export-Registry:
+  `flarum.reg.get('core', 'common/extend')`, `'forum/components/HeaderPrimary'`, `'common/components/Icon'`
+  (Icon ist eine Komponente: `m(Icon, { name: 'fas fa-hashtag' })`).
+- Das Asset-Bundle enthält die Datei nur, wenn `extend.php` beim `cache:clear` aktiv war. Nach dem Einspielen
+  immer `cache:clear` ausführen und PHP-FPM neu laden (macht das Deploy-Skript).
 - Flarum führt die Extender aus `extend.php` **vor** allen Extensions aus. Für die Datei selbst ist die
   Reihenfolge im Bundle unkritisch.
 - Ein Test gegen ein Wegwerf-Staging (Container mit Kopie der Dateien, `php -S`, SSH-Tunnel) ist gefahrlos

@@ -22,7 +22,8 @@ sql_client() {  # SQL von stdin an die Forum-DB (utf8mb4)
 }
 set_less() {    # $1 = Datei; Wert als Hex-Literal, keine Quoting-Probleme
   python3 -c "import sys;print(\"UPDATE settings SET value=CONVERT(0x%s USING utf8mb4) WHERE \`key\`='custom_less';\" % open(sys.argv[1],'rb').read().hex())" "$1" | sql_client
-  ssh "$HOST" "docker exec -u www-data -w /var/www/html flarum-app-freespawn php flarum cache:clear" >/dev/null
+  # Zweimal: Flarum 2 cached Settings in Redis; der erste Lauf baut die Assets noch aus dem alten Wert
+  ssh "$HOST" "docker exec -u www-data -w /var/www/html flarum-app-freespawn sh -c 'php flarum cache:clear; php flarum cache:clear'" >/dev/null
 }
 healthy() {
   local code css

@@ -40,7 +40,7 @@ einfügen und speichern.
 
 ## Was geprüft wurde
 
-- Kompiliert fehlerfrei mit less.js und less.php (Flarum 1.8.19). Beide Ausgaben sind identisch.
+- Kompiliert fehlerfrei mit less.js und less.php (Flarum 2.0.2, less.php 5). Beide Ausgaben sind identisch.
 - Kontraste (WCAG): Text auf allen Flächen mindestens 5,4:1, Weiß im Header-Verlauf
   mindestens 4,9:1, Feldränder mindestens 3,3:1.
 - Text ausschließlich in `rem`, keine px-Schriftgrößen.
@@ -104,3 +104,9 @@ abgedunkelt, Board in voller Farbe) in der Meta-Zeile.
 
 Umzug bestehender Threads: bisheriges Haupt-Tag blieb erhalten (News, Diskussion),
 Gaming/Linux/Technik-Zweittags entfielen; unmarkierte Threads kamen nach Allgemein bzw. Hilfe.
+
+## Flarum 2: Header-Farben
+Flarum 2 setzt die Header-Farben je Farbschema unter `[data-colored-header=true][data-theme^=…]`
+(Spezifität 0,2,0). Das schlägt `html:root`. Deshalb steht in `custom.less` ein Block
+`html[data-colored-header=true][data-theme^=…]` (0,2,1), der Weiß für alle Schemata erzwingt. Neue
+Palette-Variablen, die Flarum je Schema überschreibt, brauchen die gleiche Behandlung.

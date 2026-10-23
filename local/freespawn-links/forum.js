@@ -1,7 +1,7 @@
 /*
  * FreeSpawn: Links zu IRC, Mumble und Mastodon in der Kopfleiste (links neben dem Titel).
  *
- * Kleine lokale Erweiterung ohne Build-Schritt: haengt sich per extend() an HeaderPrimary.
+ * Kleine lokale Erweiterung ohne Build-Schritt: haengt sich per extend() an HeaderPrimary (Module aus flarum.reg).
  * Aussehen steht im Theme (theme/custom.less, ".FreeSpawnLink"). Wird ueber local/extend.php
  * in den Forum-Bundle eingebunden (siehe local/README.md).
  *
@@ -11,13 +11,13 @@
 (function () {
   'use strict';
   try {
-    var compat = window.flarum && window.flarum.core && window.flarum.core.compat;
-    if (!compat) return;
-    // Der Forum-Bundle registriert die Module ohne "forum/"- bzw. "common/"-Praefix.
-    var extendModule = compat['extend'] || compat['common/extend'];
-    var HeaderPrimary = compat['components/HeaderPrimary'] || compat['forum/components/HeaderPrimary'];
-    var icon = compat['helpers/icon'] || compat['common/helpers/icon'];
-    if (!extendModule || !HeaderPrimary || !icon || !window.app || !window.m) return;
+    // Flarum 2: kein "compat"-Objekt mehr, Module liegen in der Export-Registry (flarum.reg).
+    var reg = window.flarum && window.flarum.reg;
+    if (!reg || !window.app || !window.m) return;
+    var extendModule = reg.get('core', 'common/extend');
+    var HeaderPrimary = reg.get('core', 'forum/components/HeaderPrimary');
+    var Icon = reg.get('core', 'common/components/Icon');
+    if (!extendModule || !HeaderPrimary || !Icon) return;
 
     var LINKS = [
       { id: 'freespawnIrc',      priority: 30, icon: 'fas fa-hashtag',  label: 'IRC',
@@ -32,13 +32,12 @@
     ];
 
     window.app.initializers.add('freespawn-links', function () {
-      compat = window.flarum.core.compat;
       extendModule.extend(HeaderPrimary.prototype, 'items', function (items) {
         LINKS.forEach(function (l) {
           var attrs = { href: l.href, title: l.title, 'aria-label': l.title };
           if (l.external) { attrs.target = '_blank'; attrs.rel = (l.rel ? l.rel + ' ' : '') + 'noopener'; }
           items.add(l.id, window.m('a.FreeSpawnLink', attrs,
-            [icon(l.icon), window.m('span.FreeSpawnLink-label', l.label)]), l.priority);
+            [window.m(Icon, { name: l.icon }), window.m('span.FreeSpawnLink-label', l.label)]), l.priority);
         });
       });
     });
